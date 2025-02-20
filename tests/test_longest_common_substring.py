@@ -23,7 +23,8 @@ def test_case_sensitivity():
 
 def test_multiple_longest_substrings():
     """Test cases where multiple substrings of same length exist"""
-    assert longest_common_substring("xabcde", "abcdxy") == "abcd"
+    result = longest_common_substring("xabcde", "abcdxy")
+    assert result == "abcd"
     
 def test_edge_cases():
     """Test various edge cases"""
