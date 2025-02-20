@@ -8,6 +8,10 @@ def longest_common_substring(str1, str2):
     
     Returns:
         str: The longest common substring. If no common substring exists, returns an empty string.
+    
+    Note:
+        - Matching is case-sensitive
+        - Substring must be at least 2 characters long
     """
     # Handle edge cases
     if not str1 or not str2:
@@ -17,25 +21,18 @@ def longest_common_substring(str1, str2):
     if len(str1) == 1 and len(str2) == 1 and str1 == str2:
         return str1
     
-    # Substring must match exactly, including case
-    longest_match = ""
-    for i in range(len(str1)):
-        for j in range(len(str2)):
-            # Track current match
-            current_match = ""
-            x, y = i, j
+    # Check for strict substring matching
+    max_substring = ""
+    for start1 in range(len(str1)):
+        for length in range(2, len(str1) - start1 + 1):
+            # Extract potential substring
+            substring = str1[start1:start1+length]
             
-            # Strict match with exact case preservation
-            while (x < len(str1) and 
-                   y < len(str2) and 
-                   str1[x] == str2[y]):
-                current_match += str1[x]
-                x += 1
-                y += 1
-            
-            # Update if current match is longer and meets criteria
-            if (len(current_match) > len(longest_match) and 
-                len(current_match) > 1):
-                longest_match = current_match
+            # Search for exact match in second string
+            for start2 in range(len(str2)):
+                if substring == str2[start2:start2+length]:
+                    # Update max_substring if current is longer
+                    if len(substring) > len(max_substring):
+                        max_substring = substring
     
-    return longest_match
+    return max_substring
