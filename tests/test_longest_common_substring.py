@@ -21,7 +21,7 @@ def test_case_sensitivity():
     """Test case sensitivity of substring matching"""
     assert longest_common_substring("Hello", "hello") == ""
     assert longest_common_substring("HeLLo", "hello") == ""
-    assert longest_common_substring("ABC", "abc") == ""
+    assert longest_common_substring("HELLO", "hello") == ""
 
 def test_multiple_longest_substrings():
     """Test cases where multiple substrings of same length exist"""
