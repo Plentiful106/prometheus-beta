@@ -13,21 +13,19 @@ def longest_common_substring(str1, str2):
     if not str1 or not str2:
         return ""
     
-    # Special case for single character match with exact case
+    # Special case for identical single-character strings
     if len(str1) == 1 and len(str2) == 1 and str1 == str2:
         return str1
     
-    result = ""
-    
-    # Exhaustive search with absolute strict matching
-    for start1 in range(len(str1)):
-        for length in range(1, len(str1) - start1 + 1):
+    # Substring must be an exact match, including case
+    for length in range(min(len(str1), len(str2)), 1, -1):
+        for start1 in range(len(str1) - length + 1):
             substring = str1[start1:start1+length]
             
-            # Check if this exact substring exists in str2 with same case at same position
-            for start2 in range(len(str2)):
-                if substring == str2[start2:start2+length] and len(substring) > len(result):
-                    result = substring
+            # Check for exact positions and case matching
+            for start2 in range(len(str2) - length + 1):
+                if substring == str2[start2:start2+length]:
+                    return substring
     
-    # Return only if truly meaningful substring found
-    return result if len(result) > 1 else ""
+    # No substring longer than 1 character found
+    return ""
