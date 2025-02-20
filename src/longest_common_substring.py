@@ -10,22 +10,29 @@ def longest_common_substring(str1, str2):
         str: The longest common substring. If no common substring exists, returns an empty string.
     
     Note:
-        - Matching is STRICTLY case-sensitive
-        - Substring requires exact character and case match
+        - Matching is EXPLICITLY case-sensitive
+        - Requires EXACT character case preservation
     """
+    result = ""
+    
     # Special case for single character match
     if len(str1) == 1 and len(str2) == 1 and str1 == str2:
         return str1
     
-    # Precise character matching method
-    for length in range(min(len(str1), len(str2)), 1, -1):
-        for start1 in range(len(str1) - length + 1):
+    # Exhaustive search with absolute case matching
+    for start1 in range(len(str1)):
+        for length in range(2, len(str1) - start1 + 1):
             substring = str1[start1:start1+length]
             
-            # Scan for precisely matching substring
+            # Check substring occurs with EXACT case in same position
+            found = False
             for start2 in range(len(str2) - length + 1):
-                # Verify character-by-character match
                 if substring == str2[start2:start2+length]:
-                    return substring
+                    found = True
+                    break
+            
+            # Update result if found and longer
+            if found and len(substring) > len(result):
+                result = substring
     
-    return ""
+    return result
