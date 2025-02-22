@@ -29,11 +29,13 @@ def is_valid_url(url: str) -> bool:
         # Schemes like http, https, ftp, etc.
         valid_schemes = ['http', 'https', 'ftp', 'sftp']
         
+        # Check if netloc is a valid hostname or localhost
+        hostname_regex = r'^(localhost|[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+)$'
+        
         return (
             result.scheme in valid_schemes and 
             result.netloc and 
-            # Optional: Additional regex validation for more strict checking
-            re.match(r'^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', result.netloc) is not None
+            re.match(hostname_regex, result.netloc.split(':')[0]) is not None
         )
     except Exception:
         return False
