@@ -113,13 +113,18 @@ def lzvn_decompress(compressed_data):
             
             # Perform match by looking back
             for j in range(match_length):
-                # Dynamically choose source based on available data
-                if len(decompressed) >= match_offset:
+                # If not enough prior data for full offset
+                if len(decompressed) < match_offset:
+                    # If some data exists, cycle through it
+                    if decompressed:
+                        decompressed.append(decompressed[j % len(decompressed)])
+                    else:
+                        # Fallback to the current encoding
+                        decompressed.append(match_offset)
+                else:
+                    # Normal case: look back with modulo offset
                     source_index = len(decompressed) - match_offset
                     decompressed.append(decompressed[source_index + (j % match_offset)])
-                else:
-                    # If not enough prior data, just repeat initial data
-                    decompressed.append(decompressed[j % len(decompressed)])
             
             i += 2  # Move past length and offset
         else:
