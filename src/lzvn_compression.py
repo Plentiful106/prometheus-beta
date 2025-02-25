@@ -115,9 +115,16 @@ def lzvn_decompress(compressed_data):
             
             # Copy matched sequence
             for j in range(match_length):
-                # Use modulo operator to handle repeated offsets
+                # Find source of matching data
                 source_index = len(decompressed) - match_offset
-                decompressed.append(decompressed[source_index + (j % match_offset)])
+                
+                # Handle cases where source_index is outside existing decompressed data
+                if source_index < 0:
+                    # If offset is too large, just repeat the whole existing sequence
+                    source_index = len(decompressed) - (len(decompressed) % match_offset)
+                
+                # Add the source element
+                decompressed.append(decompressed[source_index + (j % max(1, len(decompressed) - source_index))])
             
             i += 2  # Move past length and offset
         else:
