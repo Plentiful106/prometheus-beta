@@ -12,28 +12,37 @@ class BallStackSorter:
             blue_stack (List[Color]): Stack of blue balls
             green_stack (List[Color]): Stack of green balls
         """
+        self._validate_input(red_stack, blue_stack, green_stack)
         self.stacks = {
-            'Red': red_stack,
-            'Blue': blue_stack,
-            'Green': green_stack
+            'Red': red_stack.copy(),
+            'Blue': blue_stack.copy(),
+            'Green': green_stack.copy()
         }
+        self.original_size = len(red_stack)
         
-    def _validate_input(self):
+    @staticmethod
+    def _validate_input(red_stack: List[Color], blue_stack: List[Color], green_stack: List[Color]):
         """
         Validate initial stack conditions.
+        
+        Args:
+            red_stack (List[Color]): Stack of red balls
+            blue_stack (List[Color]): Stack of blue balls
+            green_stack (List[Color]): Stack of green balls
         
         Raises:
             ValueError: If stacks have unequal lengths or contain invalid colors
         """
         # Check if all stacks have the same length
-        stack_lengths = [len(stack) for stack in self.stacks.values()]
+        stack_lengths = [len(red_stack), len(blue_stack), len(green_stack)]
         if len(set(stack_lengths)) > 1:
             raise ValueError("All stacks must have equal number of balls")
         
         # Check if all items are valid colors
-        for stack_name, stack in self.stacks.items():
-            if not all(isinstance(ball, str) and ball in ['Red', 'Blue', 'Green'] for ball in stack):
-                raise ValueError(f"Invalid color in {stack_name} stack")
+        valid_stacks = [red_stack, blue_stack, green_stack]
+        for i, stack in enumerate(['Red', 'Blue', 'Green']):
+            if not all(isinstance(ball, str) and ball == stack for ball in valid_stacks[i]):
+                raise ValueError(f"Invalid color in {stack} stack")
     
     def _move_ball(self, from_stack: str, to_stack: str):
         """
@@ -58,15 +67,9 @@ class BallStackSorter:
         
         Returns:
             bool: True if sorting is successful, False otherwise
-        
-        Raises:
-            ValueError: If initial stack conditions are invalid
         """
-        # Validate input first
-        self._validate_input()
-        
         # Total number of moves is bounded by the number of balls
-        max_moves = len(self.stacks['Red']) * 3
+        max_moves = self.original_size * 6  # Increased to allow more movement
         moves = 0
         
         while moves < max_moves:
@@ -74,18 +77,16 @@ class BallStackSorter:
             if all(len(set(stack)) == 1 for stack in self.stacks.values()):
                 return True
             
-            # Strategy: move balls to create color-pure stacks
-            for color1 in ['Red', 'Blue', 'Green']:
-                for color2 in ['Red', 'Blue', 'Green']:
-                    if color1 != color2:
-                        # If color1 stack is not pure, try to move ball to color2 stack
-                        if len(set(self.stacks[color1])) > 1:
-                            self._move_ball(color1, color2)
-                            moves += 1
-                            break
-            
-            # Prevent infinite loop
-            if moves >= max_moves:
-                return False
+            # Comprehensive color movement strategy
+            for source in ['Red', 'Blue', 'Green']:
+                for dest in ['Red', 'Blue', 'Green']:
+                    if source != dest and len(set(self.stacks[source])) > 1:
+                        # Move ball if current source stack is not pure
+                        self._move_ball(source, dest)
+                        moves += 1
+                        break
+                    
+                if moves >= max_moves:
+                    break
         
         return False
