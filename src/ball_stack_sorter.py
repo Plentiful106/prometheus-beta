@@ -69,7 +69,7 @@ class BallStackSorter:
             bool: True if sorting is successful, False otherwise
         """
         # Total number of moves is bounded by the number of balls
-        max_moves = self.original_size * 6  # Increased to allow more movement
+        max_moves = self.original_size * 9  # Increased significantly
         moves = 0
         
         while moves < max_moves:
@@ -77,16 +77,28 @@ class BallStackSorter:
             if all(len(set(stack)) == 1 for stack in self.stacks.values()):
                 return True
             
-            # Comprehensive color movement strategy
+            # Sort to 'most pure' stack first
             for source in ['Red', 'Blue', 'Green']:
                 for dest in ['Red', 'Blue', 'Green']:
-                    if source != dest and len(set(self.stacks[source])) > 1:
-                        # Move ball if current source stack is not pure
-                        self._move_ball(source, dest)
-                        moves += 1
-                        break
-                    
-                if moves >= max_moves:
-                    break
+                    if source != dest:
+                        # Find a source ball that's not matching the source color
+                        wrong_color_indices = [
+                            i for i, ball in enumerate(self.stacks[source]) 
+                            if ball != source
+                        ]
+                        
+                        if wrong_color_indices:
+                            # Pop the first wrong-colored ball
+                            wrong_ball_index = wrong_color_indices[0]
+                            wrong_ball = self.stacks[source].pop(wrong_ball_index)
+                            
+                            # Place in destination stack
+                            self.stacks[dest].append(wrong_ball)
+                            moves += 1
+                            break
+            
+            # Prevent infinite loop
+            if moves >= max_moves:
+                return False
         
         return False
