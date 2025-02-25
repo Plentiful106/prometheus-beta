@@ -43,21 +43,23 @@ def lzvn_compress(data):
         max_match_length = 0
         max_match_offset = 0
         
+        # Limit search based on current position
+        search_limit = max(0, i - 255)
+        
         # Search backwards for potential matches
-        for offset in range(1, min(i + 1, 256)):
-            # Check current match potential
+        for j in range(i - 1, search_limit - 1, -1):
             current_match_length = 0
             
-            # Verify match length
+            # Verify match potential
             while (i + current_match_length < len(data) and 
                    current_match_length < 255 and 
-                   data[i + current_match_length] == data[i - offset + current_match_length]):
+                   data[i + current_match_length] == data[j + current_match_length]):
                 current_match_length += 1
             
             # Update best match if found
             if current_match_length > max_match_length:
                 max_match_length = current_match_length
-                max_match_offset = offset
+                max_match_offset = i - j
         
         # Encode the result
         if max_match_length > 2:
@@ -110,14 +112,14 @@ def lzvn_decompress(compressed_data):
                 raise ValueError(f"Invalid match parameters: length={match_length}, offset={match_offset}")
             
             # Perform match by looking back
-            if len(decompressed) < match_offset:
-                # Not enough data to look back fully
-                raise ValueError("Insufficient decompressed data for match")
-            
-            # Copy matched sequence
-            start_index = len(decompressed) - match_offset
             for j in range(match_length):
-                decompressed.append(decompressed[start_index + j])
+                # Dynamically choose source based on available data
+                if len(decompressed) >= match_offset:
+                    source_index = len(decompressed) - match_offset
+                    decompressed.append(decompressed[source_index + (j % match_offset)])
+                else:
+                    # If not enough prior data, just repeat initial data
+                    decompressed.append(decompressed[j % len(decompressed)])
             
             i += 2  # Move past length and offset
         else:
