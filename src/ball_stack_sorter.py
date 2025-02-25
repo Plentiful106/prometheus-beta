@@ -8,9 +8,9 @@ class BallStackSorter:
         Initialize the ball stack sorter with three stacks of colored balls.
         
         Args:
-            red_stack (List[Color]): Stack of red balls
-            blue_stack (List[Color]): Stack of blue balls
-            green_stack (List[Color]): Stack of green balls
+            red_stack (List[Color]): Stack of balls (include red balls)
+            blue_stack (List[Color]): Stack of balls (include blue balls)
+            green_stack (List[Color]): Stack of balls (include green balls)
         """
         self._validate_input(red_stack, blue_stack, green_stack)
         self.stacks = {
@@ -31,18 +31,18 @@ class BallStackSorter:
             green_stack (List[Color]): Stack of green balls
         
         Raises:
-            ValueError: If stacks have unequal lengths or contain invalid colors
+            ValueError: If stacks have unequal lengths
         """
         # Check if all stacks have the same length
         stack_lengths = [len(red_stack), len(blue_stack), len(green_stack)]
         if len(set(stack_lengths)) > 1:
             raise ValueError("All stacks must have equal number of balls")
         
-        # Check if all items are valid colors
-        valid_stacks = [red_stack, blue_stack, green_stack]
-        for i, stack in enumerate(['Red', 'Blue', 'Green']):
-            if not all(isinstance(ball, str) and ball == stack for ball in valid_stacks[i]):
-                raise ValueError(f"Invalid color in {stack} stack")
+        # Check if all items are strings and match the color domain
+        valid_colors = {'Red', 'Blue', 'Green'}
+        for stack_name, stack in [('Red', red_stack), ('Blue', blue_stack), ('Green', green_stack)]:
+            if not all(isinstance(ball, str) and ball in valid_colors for ball in stack):
+                raise ValueError(f"Invalid color in {stack_name} stack")
     
     def _move_ball(self, from_stack: str, to_stack: str):
         """
