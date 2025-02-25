@@ -52,54 +52,45 @@ class BallStackSorter:
         Returns:
             bool: True if sorting is successful, False otherwise
         """
-        # Maximum allowed moves
-        max_moves = self.original_size * 12
+        max_moves = self.original_size * 15  # Significantly increased move limit
         moves = 0
         
-        # Pre-compute the preferred color for each stack
-        color_order = {
-            'Red': 'Red',
-            'Blue': 'Blue', 
-            'Green': 'Green'
-        }
+        # Order defines the target distribution
+        order = ['Red', 'Blue', 'Green']
         
         while moves < max_moves:
-            # Check if sorted
+            # Quick check for sorted stacks
             if all(len(set(stack)) == 1 for stack in self.stacks.values()):
                 return True
             
-            # Most complex sorting strategy
-            for color, stack in self.stacks.items():
-                # Target color for this stack
-                target_color = color_order[color]
-                
-                # Color count in current stack
-                color_count = Counter(stack)
-                
-                # If stack is not pure
-                if len(set(stack)) > 1:
-                    # Find a ball that doesn't match the stack's color
-                    for i, ball in enumerate(stack):
-                        if ball != target_color:
-                            # Remove this ball
-                            non_target = stack.pop(i)
+            # Comprehensive sorting approach
+            for current_color in order:
+                # If current stack is not pure
+                if len(set(self.stacks[current_color])) > 1:
+                    # Try to move a non-matching ball
+                    for i, ball in enumerate(self.stacks[current_color]):
+                        if ball != current_color:
+                            # Remove ball from current stack
+                            non_matching_ball = self.stacks[current_color].pop(i)
                             moves += 1
                             
-                            # Attempt to redistribute
-                            redistributed = False
-                            for other_color in ['Red', 'Blue', 'Green']:
-                                if other_color != color and len(self.stacks[other_color]) < self.original_size:
-                                    self.stacks[other_color].append(non_target)
-                                    redistributed = True
+                            # Find the best destination
+                            destination_found = False
+                            for dest_color in order:
+                                # Destination must not be the current stack and must have space
+                                if dest_color != current_color and len(self.stacks[dest_color]) < self.original_size:
+                                    self.stacks[dest_color].append(non_matching_ball)
+                                    destination_found = True
                                     break
                             
-                            # If redistribution fails, put back
-                            if not redistributed:
-                                stack.insert(i, non_target)
+                            # If no destination was found, put back
+                            if not destination_found:
+                                self.stacks[current_color].insert(i, non_matching_ball)
+                                moves -= 1
                             
                             break
             
-            # If moves are exhausted, exit
+            # Prevent infinite loop
             if moves >= max_moves:
                 return False
         
