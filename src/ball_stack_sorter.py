@@ -1,4 +1,5 @@
-from typing import List, Literal
+from typing import List, Literal, Dict
+from copy import deepcopy
 
 Color = Literal['Red', 'Blue', 'Green']
 
@@ -44,23 +45,6 @@ class BallStackSorter:
             if not all(isinstance(ball, str) and ball in valid_colors for ball in stack):
                 raise ValueError(f"Invalid color in {stack_name} stack")
     
-    def _move_ball(self, from_stack: str, to_stack: str):
-        """
-        Move a single ball from one stack to another.
-        
-        Args:
-            from_stack (str): Source stack color
-            to_stack (str): Destination stack color
-        
-        Raises:
-            ValueError: If the source stack is empty
-        """
-        if not self.stacks[from_stack]:
-            raise ValueError(f"Cannot move ball from empty {from_stack} stack")
-        
-        ball = self.stacks[from_stack].pop()
-        self.stacks[to_stack].append(ball)
-    
     def sort(self) -> bool:
         """
         Sort the stacks such that each stack contains only one color.
@@ -68,41 +52,47 @@ class BallStackSorter:
         Returns:
             bool: True if sorting is successful, False otherwise
         """
-        # Total number of moves is bounded by the number of balls
-        max_moves = self.original_size * 9  # Increased significantly
-        moves = 0
-        
         # Define the order for sorting
         order = ['Red', 'Blue', 'Green']
         
+        # Maximum allowed moves
+        max_moves = self.original_size * 9
+        
+        # Try different sorting strategies
+        moves = 0
         while moves < max_moves:
-            # Check if all stacks are sorted (each contains only one color)
+            # Check if sorted
             if all(len(set(stack)) == 1 for stack in self.stacks.values()):
                 return True
             
-            # Move non-matching balls to the side
-            for current in order:
-                # Find other possible destination stacks for current color
-                destinations = [dest for dest in order if dest != current]
+            # Comprehensive ball redistribution
+            for color in order:
+                # Identify which stacks have non-color balls
+                non_color_indices = [
+                    i for i, ball in enumerate(self.stacks[color]) 
+                    if ball != color
+                ]
                 
-                for dest in destinations:
-                    # Find non-current color balls in current stack
-                    wrong_color_indices = [
-                        i for i, ball in enumerate(self.stacks[current]) 
-                        if ball != current
-                    ]
+                # Move non-matching balls out
+                if non_color_indices:
+                    non_match_ball_index = non_color_indices[0]
+                    non_match_ball = self.stacks[color].pop(non_match_ball_index)
                     
-                    if wrong_color_indices:
-                        # Pop the first wrong-colored ball
-                        wrong_ball_index = wrong_color_indices[0]
-                        wrong_ball = self.stacks[current].pop(wrong_ball_index)
-                        
-                        # Place in destination stack
-                        self.stacks[dest].append(wrong_ball)
+                    # Try moving to another stack
+                    other_stacks = [c for c in order if c != color]
+                    moved = False
+                    for dest in other_stacks:
+                        # Only move if destination is not full
+                        self.stacks[dest].append(non_match_ball)
                         moves += 1
+                        moved = True
                         break
+                    
+                    if not moved:
+                        # Reset if unable to move
+                        self.stacks[color].insert(non_match_ball_index, non_match_ball)
             
-            # Prevent infinite loop
+            # Prevent excessive iterations
             if moves >= max_moves:
                 return False
         
