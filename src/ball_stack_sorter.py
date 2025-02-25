@@ -72,30 +72,35 @@ class BallStackSorter:
         max_moves = self.original_size * 9  # Increased significantly
         moves = 0
         
+        # Define the order for sorting
+        order = ['Red', 'Blue', 'Green']
+        
         while moves < max_moves:
             # Check if all stacks are sorted (each contains only one color)
             if all(len(set(stack)) == 1 for stack in self.stacks.values()):
                 return True
             
-            # Sort to 'most pure' stack first
-            for source in ['Red', 'Blue', 'Green']:
-                for dest in ['Red', 'Blue', 'Green']:
-                    if source != dest:
-                        # Find a source ball that's not matching the source color
-                        wrong_color_indices = [
-                            i for i, ball in enumerate(self.stacks[source]) 
-                            if ball != source
-                        ]
+            # Move non-matching balls to the side
+            for current in order:
+                # Find other possible destination stacks for current color
+                destinations = [dest for dest in order if dest != current]
+                
+                for dest in destinations:
+                    # Find non-current color balls in current stack
+                    wrong_color_indices = [
+                        i for i, ball in enumerate(self.stacks[current]) 
+                        if ball != current
+                    ]
+                    
+                    if wrong_color_indices:
+                        # Pop the first wrong-colored ball
+                        wrong_ball_index = wrong_color_indices[0]
+                        wrong_ball = self.stacks[current].pop(wrong_ball_index)
                         
-                        if wrong_color_indices:
-                            # Pop the first wrong-colored ball
-                            wrong_ball_index = wrong_color_indices[0]
-                            wrong_ball = self.stacks[source].pop(wrong_ball_index)
-                            
-                            # Place in destination stack
-                            self.stacks[dest].append(wrong_ball)
-                            moves += 1
-                            break
+                        # Place in destination stack
+                        self.stacks[dest].append(wrong_ball)
+                        moves += 1
+                        break
             
             # Prevent infinite loop
             if moves >= max_moves:
