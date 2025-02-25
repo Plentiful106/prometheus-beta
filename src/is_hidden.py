@@ -12,11 +12,15 @@ def is_hidden_file(file_path):
 
     Raises:
         TypeError: If file_path is not a string.
-        FileNotFoundError: If the file does not exist.
+        FileNotFoundError: If the file does not exist or path is empty.
     """
     # Check input type
     if not isinstance(file_path, str):
         raise TypeError("file_path must be a string")
+
+    # Handle empty string path
+    if not file_path:
+        raise FileNotFoundError("Empty file path provided")
 
     # Normalize the path
     file_path = os.path.normpath(file_path)
