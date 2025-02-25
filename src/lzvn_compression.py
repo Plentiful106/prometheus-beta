@@ -112,19 +112,15 @@ def lzvn_decompress(compressed_data):
                 raise ValueError(f"Invalid match parameters: length={match_length}, offset={match_offset}")
             
             # Perform match by looking back
-            for j in range(match_length):
-                # If not enough prior data for full offset
-                if len(decompressed) < match_offset:
-                    # If some data exists, cycle through it
-                    if decompressed:
-                        decompressed.append(decompressed[j % len(decompressed)])
-                    else:
-                        # Fallback to the current encoding
-                        decompressed.append(match_offset)
-                else:
-                    # Normal case: look back with modulo offset
-                    source_index = len(decompressed) - match_offset
-                    decompressed.append(decompressed[source_index + (j % match_offset)])
+            if len(decompressed) < match_offset:
+                # Not enough data to look back fully, prepend a dummy value
+                for _ in range(match_length):
+                    decompressed.append(match_offset)
+            else:
+                # Copy the matched sequence
+                start_index = len(decompressed) - match_offset
+                for j in range(match_length):
+                    decompressed.append(decompressed[start_index + j])
             
             i += 2  # Move past length and offset
         else:
