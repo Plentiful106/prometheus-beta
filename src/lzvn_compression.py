@@ -49,7 +49,7 @@ def lzvn_compress(data):
             
             # Check match length
             while (i + current_match_length < len(data) and 
-                   i + current_match_length < len(data) and 
+                   j + current_match_length < i and 
                    data[i + current_match_length] == data[j + current_match_length]):
                 current_match_length += 1
                 
@@ -114,14 +114,10 @@ def lzvn_decompress(compressed_data):
                 raise ValueError(f"Invalid match parameters: length={match_length}, offset={match_offset}")
             
             # Copy matched sequence
-            start = len(decompressed) - match_offset
-            if start < 0:
-                raise ValueError("Match offset exceeds decompressed data length")
-            
             for j in range(match_length):
-                if start + j < 0 or start + j >= len(decompressed):
-                    raise ValueError("Invalid match sequence")
-                decompressed.append(decompressed[start + j])
+                # Use modulo operator to handle repeated offsets
+                source_index = len(decompressed) - match_offset
+                decompressed.append(decompressed[source_index + (j % match_offset)])
             
             i += 2  # Move past length and offset
         else:
