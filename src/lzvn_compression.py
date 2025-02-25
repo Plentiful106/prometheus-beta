@@ -40,38 +40,35 @@ def lzvn_compress(data):
     i = 0
     while i < len(data):
         # Look for repeated sequences
-        match_length = 0
-        match_offset = 0
+        max_match_length = 0
+        max_match_offset = 0
         
         # Search backwards for potential matches
-        for j in range(max(0, i - 255), i):
+        for offset in range(1, min(i + 1, 256)):
+            # Check current match potential
             current_match_length = 0
             
-            # Check match length
+            # Verify match length
             while (i + current_match_length < len(data) and 
-                   j + current_match_length < i and 
-                   data[i + current_match_length] == data[j + current_match_length]):
+                   current_match_length < 255 and 
+                   data[i + current_match_length] == data[i - offset + current_match_length]):
                 current_match_length += 1
-                
-                # Limit match length to prevent overflow
-                if current_match_length >= 255:
-                    break
             
             # Update best match if found
-            if current_match_length > match_length:
-                match_length = current_match_length
-                match_offset = i - j
+            if current_match_length > max_match_length:
+                max_match_length = current_match_length
+                max_match_offset = offset
         
         # Encode the result
-        if match_length > 2:
-            # Compression match found
+        if max_match_length > 2:
+            # We have a match worth compressing
             compressed.extend([
-                match_length,  # Length of match
-                match_offset   # Offset of match
+                max_match_length,  # Length of match
+                max_match_offset   # Offset of match
             ])
-            i += match_length
+            i += max_match_length
         else:
-            # No match, store literal
+            # No meaningful match, store literal
             compressed.append(data[i])
             i += 1
     
@@ -103,9 +100,8 @@ def lzvn_decompress(compressed_data):
     i = 0
     
     while i < len(compressed_data):
-        # Check if we have a match or literal
         if i + 1 < len(compressed_data) and isinstance(compressed_data[i], int) and isinstance(compressed_data[i+1], int):
-            # This is a match (length, offset)
+            # Match entry (length, offset)
             match_length = compressed_data[i]
             match_offset = compressed_data[i+1]
             
@@ -113,18 +109,15 @@ def lzvn_decompress(compressed_data):
             if match_length <= 0 or match_offset <= 0:
                 raise ValueError(f"Invalid match parameters: length={match_length}, offset={match_offset}")
             
+            # Perform match by looking back
+            if len(decompressed) < match_offset:
+                # Not enough data to look back fully
+                raise ValueError("Insufficient decompressed data for match")
+            
             # Copy matched sequence
+            start_index = len(decompressed) - match_offset
             for j in range(match_length):
-                # Find source of matching data
-                source_index = len(decompressed) - match_offset
-                
-                # Handle cases where source_index is outside existing decompressed data
-                if source_index < 0:
-                    # If offset is too large, just repeat the whole existing sequence
-                    source_index = len(decompressed) - (len(decompressed) % match_offset)
-                
-                # Add the source element
-                decompressed.append(decompressed[source_index + (j % max(1, len(decompressed) - source_index))])
+                decompressed.append(decompressed[start_index + j])
             
             i += 2  # Move past length and offset
         else:
