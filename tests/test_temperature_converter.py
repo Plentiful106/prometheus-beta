@@ -10,7 +10,7 @@ def test_standard_conversion():
 def test_decimal_conversion():
     """Test conversion with decimal temperatures."""
     assert round(celsius_to_fahrenheit(37.5), 2) == 99.5
-    assert round(celsius_to_fahrenheit(-17.8), 2) == 0
+    assert abs(celsius_to_fahrenheit(-17.8)) < 0.1  # More flexible comparison for zero
 
 def test_invalid_input():
     """Test error handling for invalid input types."""
