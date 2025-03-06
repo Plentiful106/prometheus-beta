@@ -10,15 +10,15 @@ from timestamp_converter import timestamp_to_human_readable
 
 def test_valid_timestamp():
     """Test conversion of a standard timestamp"""
-    # Timestamp for 2023-01-15 12:30:45 UTC
+    # Timestamp for 2023-01-15 11:10:45 UTC
     timestamp = 1673781045
-    assert timestamp_to_human_readable(timestamp) == '2023-01-15 12:30:45 UTC'
+    assert timestamp_to_human_readable(timestamp) == '2023-01-15 11:10:45 UTC'
 
 def test_float_timestamp():
     """Test conversion of a float timestamp"""
     # Timestamp with decimal part
     timestamp = 1673781045.123
-    assert timestamp_to_human_readable(timestamp) == '2023-01-15 12:30:45 UTC'
+    assert timestamp_to_human_readable(timestamp) == '2023-01-15 11:10:45 UTC'
 
 def test_zero_timestamp():
     """Test conversion of 0 timestamp (Unix epoch start)"""
