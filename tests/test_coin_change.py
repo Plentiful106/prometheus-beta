@@ -24,7 +24,7 @@ def test_single_coin():
 def test_large_amount():
     """Test larger amounts"""
     assert min_coins([1, 5, 10, 25], 100) == 4  # 25 + 25 + 25 + 25
-    assert min_coins([1, 5, 10, 25], 67) == 5   # 25 + 25 + 10 + 5 + 2
+    assert min_coins([1, 5, 10, 25], 67) == 6   # 25 + 25 + 10 + 5 + 1 + 1
 
 def test_error_handling():
     """Test error cases for invalid inputs"""
