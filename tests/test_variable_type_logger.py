@@ -4,12 +4,7 @@ import io
 import sys
 from src.variable_type_logger import log_variable_type
 
-def test_log_variable_type():
-    # Capture logging output
-    log_capture = io.StringIO()
-    logging.basicConfig(stream=log_capture, level=logging.INFO, 
-                        format='%(asctime)s - %(levelname)s - %(message)s')
-
+def test_log_variable_type(capsys):
     # Test with different types of variables
     test_cases = [
         (42, 'int'),
@@ -23,38 +18,33 @@ def test_log_variable_type():
     ]
 
     for var, expected_type in test_cases:
-        # Capture the returned type and the log output
+        # Log the type
         returned_type = log_variable_type(var)
+        
+        # Capture the output
+        captured = capsys.readouterr()
         
         # Check if returned type matches expected type
         assert returned_type == expected_type
         
-        # Check if log message contains the type
-        log_output = log_capture.getvalue()
-        assert f"Variable type: {expected_type}" in log_output
-        
-        # Clear the log capture for next iteration
-        log_capture.truncate(0)
-        log_capture.seek(0)
+        # Check if log output contains the type
+        assert f"Variable type: {expected_type}" in captured.err
 
-def test_log_variable_type_custom_object():
+def test_log_variable_type_custom_object(capsys):
     # Test with a custom class
     class CustomClass:
         pass
     
     custom_obj = CustomClass()
     
-    # Capture logging output
-    log_capture = io.StringIO()
-    logging.basicConfig(stream=log_capture, level=logging.INFO, 
-                        format='%(asctime)s - %(levelname)s - %(message)s')
-
     # Log the type
     returned_type = log_variable_type(custom_obj)
+    
+    # Capture the output
+    captured = capsys.readouterr()
     
     # Check if returned type is 'CustomClass'
     assert returned_type == 'CustomClass'
     
-    # Check if log message contains the type
-    log_output = log_capture.getvalue()
-    assert "Variable type: CustomClass" in log_output
+    # Check if log output contains the type
+    assert "Variable type: CustomClass" in captured.err
