@@ -20,7 +20,7 @@ def min_coins(coins, amount):
         raise ValueError("Amount must be a non-negative integer")
     
     # Remove invalid coins and sort in descending order
-    valid_coins = [coin for coin in coins if isinstance(coin, int) and coin > 0]
+    valid_coins = sorted([coin for coin in coins if isinstance(coin, int) and coin > 0], reverse=True)
     
     if not valid_coins:
         raise ValueError("No valid coin denominations provided")
