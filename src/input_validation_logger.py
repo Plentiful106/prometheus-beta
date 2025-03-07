@@ -1,5 +1,6 @@
 import logging
 import functools
+import inspect
 
 def log_validation_message(severity='warning'):
     """
@@ -37,18 +38,17 @@ def log_validation_message(severity='warning'):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            # Log validation messages for each argument
-            for i, arg in enumerate(args):
-                if arg is None:
-                    log_func(f"Argument {i} is None in function {func.__name__}")
-                elif not arg:
-                    log_func(f"Argument {i} is empty/falsy in function {func.__name__}")
+            # Get function signature to map positional and keyword arguments
+            sig = inspect.signature(func)
+            bound_arguments = sig.bind(*args, **kwargs)
+            bound_arguments.apply_defaults()
             
-            for key, value in kwargs.items():
+            # Log validation messages for each argument
+            for name, value in bound_arguments.arguments.items():
                 if value is None:
-                    log_func(f"Keyword argument {key} is None in function {func.__name__}")
-                elif not value:
-                    log_func(f"Keyword argument {key} is empty/falsy in function {func.__name__}")
+                    log_func(f"{name} is None in function {func.__name__}")
+                elif not value and value is not False:
+                    log_func(f"{name} is empty/falsy in function {func.__name__}")
             
             return func(*args, **kwargs)
         return wrapper
