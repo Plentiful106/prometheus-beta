@@ -5,25 +5,20 @@ from src.color_logger import ColorLogger
 
 def test_log_default():
     """Test logging without a color"""
-    # Capture stdout
+    # Create a StringIO to simulate file
     captured_output = io.StringIO()
-    sys.stdout = captured_output
     
-    ColorLogger.log("Test message")
-    sys.stdout = sys.__stdout__
+    ColorLogger.log("Test message", file=captured_output)
     
     assert captured_output.getvalue().strip() == "Test message"
 
 def test_log_with_color():
     """Test logging with a specific color"""
-    # Capture stdout
+    # Create a StringIO to simulate file
     captured_output = io.StringIO()
-    sys.stdout = captured_output
     
-    ColorLogger.log("Test message", color='red')
-    sys.stdout = sys.__stdout__
+    ColorLogger.log("Test message", color='red', file=captured_output)
     
-    # Check if the message includes ANSI color code
     # Use multiple ways to check ANSI color
     value = captured_output.getvalue().strip()
     assert value == "\033[91mTest message\033[0m" or \
@@ -58,12 +53,10 @@ def test_available_colors():
     colors = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
     
     for color in colors:
-        # Capture stdout
+        # Create a StringIO to simulate a file
         captured_output = io.StringIO()
-        sys.stdout = captured_output
         
-        ColorLogger.log("Test message", color=color)
-        sys.stdout = sys.__stdout__
+        ColorLogger.log("Test message", color=color, file=captured_output)
         
         # Verify the color code is present
         value = captured_output.getvalue().strip()
