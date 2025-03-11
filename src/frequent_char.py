@@ -22,10 +22,15 @@ def find_most_frequent_char(input_string):
     if not input_string:
         return None
     
-    # Count character frequencies
+    # Count character frequencies, excluding spaces
     char_counts = {}
     for char in input_string:
-        char_counts[char] = char_counts.get(char, 0) + 1
+        if char != ' ':
+            char_counts[char] = char_counts.get(char, 0) + 1
+    
+    # Handle case where all characters are spaces
+    if not char_counts:
+        return None
     
     # Find the most frequent character
     return max(char_counts, key=char_counts.get)
