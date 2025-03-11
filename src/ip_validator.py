@@ -22,8 +22,13 @@ def is_valid_ip_address(ip_string: str) -> bool:
     if not isinstance(ip_string, str):
         return False
     
+    # Strip whitespace and check if it changes the string
+    stripped_ip = ip_string.strip()
+    if stripped_ip != ip_string:
+        return False
+    
     # Split the IP address into octets
-    octets = ip_string.split('.')
+    octets = stripped_ip.split('.')
     
     # Validate number of octets
     if len(octets) != 4:
