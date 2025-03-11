@@ -4,7 +4,7 @@ from src.longest_common_suffix import find_longest_common_suffix
 def test_common_suffix_exists():
     """Test finding a common suffix that exists."""
     strings = ["flower", "tower", "power"]
-    assert find_longest_common_suffix(strings) == "wer"
+    assert find_longest_common_suffix(strings) == "ower"
 
 def test_full_word_common_suffix():
     """Test when entire word is the common suffix."""
@@ -44,7 +44,7 @@ def test_different_length_strings():
 def test_unicode_strings():
     """Test finding common suffix with unicode strings."""
     strings = ["résumé", "causé", "passé"]
-    assert find_longest_common_suffix(strings) == "ssé"
+    assert find_longest_common_suffix(strings) == "é"
 
 def test_whitespace_suffix():
     """Test common suffix that includes whitespace."""
