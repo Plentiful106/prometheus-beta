@@ -1,5 +1,5 @@
 import sys
-from typing import Literal, Optional
+from typing import Literal, Optional, Union, TextIO
 
 class ColorLogger:
     """
@@ -26,7 +26,7 @@ class ColorLogger:
         cls, 
         message: str, 
         color: Optional[Literal['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']] = None, 
-        file=sys.stdout
+        file: Union[TextIO, None] = sys.stdout
     ) -> None:
         """
         Log a message in a specified color.
@@ -48,7 +48,8 @@ class ColorLogger:
             raise ValueError(f"Invalid color. Must be one of {list(cls.COLORS.keys())}")
         
         # Prepare the output
-        if color and sys.stdout.isatty():
+        is_tty = (file == sys.stdout) and sys.stdout.isatty()
+        if color and is_tty:
             colored_message = f"{cls.COLORS[color]}{message}{cls.COLORS['reset']}"
         else:
             colored_message = message
