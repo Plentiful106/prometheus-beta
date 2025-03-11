@@ -34,4 +34,4 @@ def test_non_numeric_input_raises_error():
 
 def test_mixed_numeric_types():
     """Test median works with mixed numeric types (int and float)."""
-    assert find_median([1, 2.5, 3]) == 2.0
+    assert find_median([1, 2.5, 3]) == 2.5  # Updated to match actual implementation
