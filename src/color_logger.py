@@ -1,4 +1,5 @@
 import sys
+import io
 from typing import Literal, Optional, Union, TextIO
 
 class ColorLogger:
@@ -50,7 +51,7 @@ class ColorLogger:
         # Check if we should use color
         use_color = color and (
             (file == sys.stdout and sys.stdout.isatty()) or  # terminal stdout
-            isinstance(file, io.StringIO)  # capture for testing
+            (file != sys.stdout and color is not None)  # custom file and color specified
         )
         
         # Prepare the output
