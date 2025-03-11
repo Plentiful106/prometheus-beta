@@ -4,7 +4,7 @@ from src.remove_duplicates import remove_duplicate_chars
 def test_remove_duplicate_chars_basic():
     """Test basic functionality of removing duplicate characters."""
     assert remove_duplicate_chars("hello") == "helo"
-    assert remove_duplicate_chars("abracadabra") == "abracd"
+    assert remove_duplicate_chars("abracadabra") == "abrcd"
     assert remove_duplicate_chars("") == ""
 
 def test_remove_duplicate_chars_case_sensitive():
@@ -27,5 +27,5 @@ def test_remove_duplicate_chars_preserves_order():
 
 def test_remove_duplicate_chars_special_characters():
     """Test handling of special characters and whitespace."""
-    assert remove_duplicate_chars("  hello  world  ") == " helo wrd"
+    assert remove_duplicate_chars("  hello  world  ") == " helowrd"
     assert remove_duplicate_chars("!@#$%^&*()!@#") == "!@#$%^&*()"
