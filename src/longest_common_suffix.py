@@ -31,11 +31,12 @@ def find_longest_common_suffix(strings):
     # Find the shortest string to limit suffix length
     shortest = min(strings, key=len)
     
-    # Try suffixes from shortest to longest
-    for i in range(1, len(shortest) + 1):
-        suffix = shortest[-i:]
-        if all(s.endswith(suffix) for s in strings):
-            return suffix
+    # Try suffixes from longest to shortest
+    for length in range(len(shortest), 0, -1):
+        for i in range(len(shortest) - length + 1):
+            suffix = shortest[len(shortest) - length + i:]
+            if all(s.endswith(suffix) for s in strings):
+                return suffix
     
     # If no common suffix found
     return ""
