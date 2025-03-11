@@ -12,8 +12,8 @@ def test_quickselect_with_duplicates():
     """Test quickselect with an array containing duplicate elements"""
     arr = [3, 3, 3, 2, 1, 1, 4]
     assert quickselect(arr, 1) == 1  # 1st smallest
-    assert quickselect(arr, 3) == 1  # 3rd smallest
-    assert quickselect(arr, 6) == 3  # 6th smallest
+    assert quickselect(arr, 3) == 2  # 3rd smallest
+    assert quickselect(arr, 5) == 3  # 5th smallest
 
 def test_quickselect_sorted_array():
     """Test quickselect with an already sorted array"""
