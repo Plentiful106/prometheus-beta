@@ -1,0 +1,62 @@
+import sys
+import io
+import pytest
+from src.color_logger import ColorLogger
+
+def test_log_default():
+    """Test logging without a color"""
+    # Capture stdout
+    captured_output = io.StringIO()
+    sys.stdout = captured_output
+    
+    ColorLogger.log("Test message")
+    sys.stdout = sys.__stdout__
+    
+    assert captured_output.getvalue().strip() == "Test message"
+
+def test_log_with_color():
+    """Test logging with a specific color"""
+    # Capture stdout
+    captured_output = io.StringIO()
+    sys.stdout = captured_output
+    
+    ColorLogger.log("Test message", color='red')
+    sys.stdout = sys.__stdout__
+    
+    # Check if the message includes ANSI color code
+    assert '\033[91mTest message\033[0m' in captured_output.getvalue()
+
+def test_log_invalid_color():
+    """Test that an invalid color raises a ValueError"""
+    with pytest.raises(ValueError, match="Invalid color"):
+        ColorLogger.log("Test message", color='invalid_color')
+
+def test_log_none_message():
+    """Test that None message raises a ValueError"""
+    with pytest.raises(ValueError, match="Message cannot be None"):
+        ColorLogger.log(None)
+
+def test_log_to_file():
+    """Test logging to a specific file-like object"""
+    # Create a StringIO to simulate a file
+    file_output = io.StringIO()
+    
+    ColorLogger.log("Test message", color='blue', file=file_output)
+    
+    # Check the content of the file-like object
+    assert file_output.getvalue().strip() == "\033[94mTest message\033[0m"
+
+def test_available_colors():
+    """Test that all specified colors can be used"""
+    colors = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
+    
+    for color in colors:
+        # Capture stdout
+        captured_output = io.StringIO()
+        sys.stdout = captured_output
+        
+        ColorLogger.log("Test message", color=color)
+        sys.stdout = sys.__stdout__
+        
+        # Verify the color code is present
+        assert f'\033[9{colors.index(color)+1}mTest message\033[0m' in captured_output.getvalue()
