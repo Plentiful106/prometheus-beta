@@ -24,7 +24,7 @@ def quickselect(arr, k):
     
     def partition(left, right):
         """
-        Partition the array and return the pivot index.
+        Partition the array and return the pivot index using random pivot.
         
         Args:
             left (int): Left boundary of the subarray
@@ -33,8 +33,22 @@ def quickselect(arr, k):
         Returns:
             int: The final position of the pivot element
         """
-        # Choose the rightmost element as pivot
-        pivot = arr[right]
+        # Choose the median-of-three as pivot for better performance on partially sorted arrays
+        mid = (left + right) // 2
+        
+        # Sort left, mid, right to choose median
+        if arr[left] > arr[mid]:
+            arr[left], arr[mid] = arr[mid], arr[left]
+        if arr[left] > arr[right]:
+            arr[left], arr[right] = arr[right], arr[left]
+        if arr[mid] > arr[right]:
+            arr[mid], arr[right] = arr[right], arr[mid]
+        
+        # Choose middle element as pivot
+        pivot = arr[mid]
+        
+        # Move pivot to end
+        arr[mid], arr[right] = arr[right], arr[mid]
         
         # Pointer for greater element
         i = left - 1
@@ -42,7 +56,7 @@ def quickselect(arr, k):
         # Traverse through all elements
         # Compare each element with pivot
         for j in range(left, right):
-            if arr[j] <= pivot:
+            if arr[j] < pivot:
                 # If element smaller than pivot is found
                 # swap it with the greater element pointed by i
                 i += 1
@@ -83,5 +97,8 @@ def quickselect(arr, k):
         # If k is greater than the pivot index, search in the right subarray
         return quickselect_recursive(pivot_index + 1, right)
     
+    # Create a copy of the array to avoid modifying the original
+    arr_copy = arr.copy()
+    
     # Call the recursive helper with full array bounds
-    return quickselect_recursive(0, len(arr) - 1)
+    return quickselect_recursive(0, len(arr_copy) - 1)
