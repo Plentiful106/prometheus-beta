@@ -48,14 +48,8 @@ class ColorLogger:
         if color is not None and color not in cls.COLORS:
             raise ValueError(f"Invalid color. Must be one of {list(cls.COLORS.keys())}")
         
-        # Check if we should use color
-        use_color = color and (
-            (file == sys.stdout and sys.stdout.isatty()) or  # terminal stdout
-            (file != sys.stdout and color is not None)  # custom file and color specified
-        )
-        
         # Prepare the output
-        if use_color:
+        if color:
             colored_message = f"{cls.COLORS[color]}{message}{cls.COLORS['reset']}"
         else:
             colored_message = message
