@@ -18,7 +18,7 @@ def test_non_palindrome_numbers():
 def test_negative_numbers():
     """Test handling of negative numbers."""
     assert is_palindrome_number(-121) == False
-    assert is_palindrome_number(-11) == True
+    assert is_palindrome_number(-11) == False
 
 def test_error_handling():
     """Test error handling for invalid input types."""
