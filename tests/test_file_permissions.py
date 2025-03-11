@@ -2,6 +2,7 @@ import os
 import pytest
 import stat
 import tempfile
+import sys
 
 from src.file_permissions import get_file_permissions
 
@@ -58,10 +59,14 @@ def test_get_file_permissions_non_existent_file():
         get_file_permissions('/path/to/non/existent/file.txt')
 
 def test_get_file_permissions_unreadable_file():
-    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        os.chmod(temp_file.name, 0o000)  # No permissions
-        
-        with pytest.raises(PermissionError):
-            get_file_permissions(temp_file.name)
-        
-        os.unlink(temp_file.name)
+    if sys.platform == 'linux':
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            # Remove all permissions
+            os.chmod(temp_file.name, 0o000)
+            
+            with pytest.raises(PermissionError):
+                get_file_permissions(temp_file.name)
+            
+            os.unlink(temp_file.name)
+    else:
+        pytest.skip("This test requires a Linux-like environment")
