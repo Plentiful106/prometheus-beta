@@ -1,4 +1,5 @@
 import os
+import re
 from typing import Union, Optional
 
 def split_file_into_chunks(
@@ -87,7 +88,24 @@ def _parse_size_string(size_str: str) -> int:
     Raises:
         ValueError: If size string is invalid.
     """
+    # Normalize the string
     size_str = size_str.upper().strip()
+
+    # Regular expression to match pattern like 1MB, 500KB
+    match = re.match(r'^(\d+(?:\.\d+)?)\s*([BKMGT]B?)$', size_str)
+    
+    if not match:
+        # If no match, try to convert directly to int if it's a number
+        try:
+            return int(size_str)
+        except ValueError:
+            raise ValueError(f"Invalid size format: {size_str}")
+
+    # Extract numeric value and unit
+    value = float(match.group(1))
+    unit = match.group(2)
+
+    # Define multipliers 
     units = {
         'B': 1,
         'KB': 1024,
@@ -96,18 +114,9 @@ def _parse_size_string(size_str: str) -> int:
         'TB': 1024 * 1024 * 1024 * 1024
     }
 
-    # Check if string ends with a valid unit
-    for unit, multiplier in units.items():
-        if size_str.endswith(unit):
-            try:
-                # Remove unit and convert to int
-                value = float(size_str[:-len(unit)])
-                return int(value * multiplier)
-            except ValueError:
-                raise ValueError(f"Invalid size format: {size_str}")
+    # Check if unit is valid
+    if unit not in units:
+        raise ValueError(f"Invalid unit: {unit}")
 
-    # If no unit found, try parsing as bytes
-    try:
-        return int(size_str)
-    except ValueError:
-        raise ValueError(f"Invalid size format: {size_str}")
+    # Convert to bytes and round down to nearest integer
+    return int(value * units[unit])
