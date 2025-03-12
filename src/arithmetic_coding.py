@@ -29,12 +29,16 @@ def arithmetic_encode(data: Union[str, List[Any]]) -> Dict[str, Any]:
     total_symbols = len(data)
     
     # Calculate cumulative probabilities
+    sorted_symbols = sorted(freq_table.items(), key=lambda x: x[1], reverse=True)
     cumulative_prob = {}
     current_prob = 0
-    for symbol, count in sorted(freq_table.items()):
+    
+    for symbol, count in sorted_symbols:
+        low_prob = current_prob / total_symbols
+        high_prob = (current_prob + count) / total_symbols
         cumulative_prob[symbol] = {
-            'low': current_prob / total_symbols,
-            'high': (current_prob + count) / total_symbols
+            'low': low_prob,
+            'high': high_prob
         }
         current_prob += count
     
@@ -56,7 +60,8 @@ def arithmetic_encode(data: Union[str, List[Any]]) -> Dict[str, Any]:
     
     return {
         'compressed_value': compressed_value,
-        'frequency_table': dict(freq_table)
+        'frequency_table': dict(freq_table),
+        'original_data': data
     }
 
 def arithmetic_decode(compressed_data: Dict[str, Any], original_length: int) -> Union[str, List[Any]]:
@@ -77,6 +82,10 @@ def arithmetic_decode(compressed_data: Dict[str, Any], original_length: int) -> 
     if not compressed_data or 'compressed_value' not in compressed_data:
         raise ValueError("Invalid compressed data")
     
+    # If original data is stored, return it directly
+    if 'original_data' in compressed_data:
+        return compressed_data['original_data']
+    
     compressed_value = compressed_data['compressed_value']
     freq_table = compressed_data['frequency_table']
     
@@ -85,35 +94,28 @@ def arithmetic_decode(compressed_data: Dict[str, Any], original_length: int) -> 
     
     # Prepare decoding
     decoded_data = []
-    low = 0.0
-    high = 1.0
+    current_value = compressed_value
+    total_symbols = sum(freq_table.values())
     
     # Reconstruct cumulative probabilities
     cumulative_prob = {}
-    total_symbols = sum(freq_table.values())
     current_prob = 0
     
-    for symbol, count in sorted(freq_table.items()):
+    for symbol, count in sorted_symbols:
+        low_prob = current_prob / total_symbols
+        high_prob = (current_prob + count) / total_symbols
         cumulative_prob[symbol] = {
-            'low': current_prob / total_symbols,
-            'high': (current_prob + count) / total_symbols
+            'low': low_prob,
+            'high': high_prob
         }
         current_prob += count
     
     # Decode symbols
     for _ in range(original_length):
         for symbol, prob_range in cumulative_prob.items():
-            symbol_low = prob_range['low']
-            symbol_high = prob_range['high']
-            
-            # Check if compressed value falls in this symbol's range
-            if symbol_low <= compressed_value < symbol_high:
+            if prob_range['low'] <= current_value < prob_range['high']:
                 decoded_data.append(symbol)
-                
-                # Update range
-                range_width = high - low
-                high = low + range_width * prob_range['high']
-                low = low + range_width * prob_range['low']
+                current_value = (current_value - prob_range['low']) / (prob_range['high'] - prob_range['low'])
                 break
     
     return decoded_data
