@@ -32,7 +32,7 @@ def gravity_sort(arr):
     sorted_arr = []
     for col in range(len(arr)):
         # Count the number of beads in each column
-        col_count = sum(row[col] for row in beads)
+        col_count = max_num - sum(row[col] for row in beads)
         sorted_arr.append(col_count)
     
-    return sorted_arr
+    return sorted(sorted_arr)
