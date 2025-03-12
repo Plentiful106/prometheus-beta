@@ -26,13 +26,13 @@ def gravity_sort(arr):
     max_num = max(arr)
     
     # Create a 2D representation of the numbers
-    beads = [[1 if num > i else 0 for num in arr] for i in range(max_num)]
+    beads = [[1 if x > i else 0 for x in arr] for i in range(max_num)]
     
     # Let gravity pull the beads down
     sorted_arr = []
-    for row in range(max_num):
+    for col in range(len(arr)):
         # Count the number of beads in each column
-        col_count = sum(beads[row])
+        col_count = sum(row[col] for row in beads)
         sorted_arr.append(col_count)
     
     return sorted_arr
