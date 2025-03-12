@@ -37,11 +37,12 @@ def gravity_sort(arr):
         for row in range(num):
             abacus[row][col] = 1
     
-    # Let gravity pull beads down
-    result = []
-    for col in range(len(arr)):
-        # Count beads from the bottom (gravity)
-        bead_count = sum(abacus[row][col] for row in range(max_num))
-        result.append(bead_count)
+    # Let gravity pull beads down and collect sorted values
+    sorted_result = []
+    for i in range(1, max_num + 1):
+        for col in range(len(arr)):
+            # Count how many beads would remain at this level
+            if sum(abacus[j][col] for j in range(i)) == i:
+                sorted_result.append(i)
     
-    return result
+    return sorted_result
