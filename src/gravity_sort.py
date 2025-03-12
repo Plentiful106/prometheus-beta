@@ -22,17 +22,26 @@ def gravity_sort(arr):
     if any(not isinstance(x, int) or x < 0 for x in arr):
         raise ValueError("Input must be a list of non-negative integers")
     
-    # Find the maximum number to determine the number of "rows"
+    # If only one element, return it as-is
+    if len(arr) == 1:
+        return arr
+    
+    # Find the maximum number to create the abacus rows
     max_num = max(arr)
     
-    # Create a 2D representation of the numbers
-    beads = [[1 if x > i else 0 for x in arr] for i in range(max_num)]
+    # Create an "abacus" representation
+    abacus = [[0] * len(arr) for _ in range(max_num)]
     
-    # Let gravity pull the beads down
-    sorted_arr = []
+    # Place initial beads
+    for col, num in enumerate(arr):
+        for row in range(num):
+            abacus[row][col] = 1
+    
+    # Let gravity pull beads down
+    result = []
     for col in range(len(arr)):
-        # Count the number of beads in each column
-        col_count = max_num - sum(row[col] for row in beads)
-        sorted_arr.append(col_count)
+        # Count beads from the bottom (gravity)
+        bead_count = sum(abacus[row][col] for row in range(max_num))
+        result.append(bead_count)
     
-    return sorted(sorted_arr)
+    return result
