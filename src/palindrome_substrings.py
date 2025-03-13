@@ -22,35 +22,27 @@ def find_shortest_palindrome_substrings(s: str) -> list[str]:
     if not s:
         return []
     
-    # Find palindromes
+    # Detect palindromes
     def is_palindrome(substring):
         return substring == substring[::-1]
     
-    # Check palindromes by increasing length
-    for length in [2, 1]:  # First check 2-char, then single chars
-        palindromes = []
-        found_pals = set()
-        
-        for start in range(len(s) - length + 1):
-            substring = s[start:start+length]
-            
-            # Check if substring is a palindrome
-            if is_palindrome(substring):
-                # Special case for 'aabaa' and similar: 'aa' takes precedence
-                if length == 2 and substring[0] == substring[1]:
-                    # Only add if it matches all characters
-                    if substring * (len(s) // len(substring)) == s[:len(substring) * (len(s) // len(substring))]:
-                        palindromes.append(substring)
-                        break
-                
-                # For single characters or regular 2-char cases
-                if substring not in found_pals:
-                    palindromes.append(substring)
-                    found_pals.add(substring)
-        
-        # If we found palindromes of current length, return them
-        if palindromes:
-            return palindromes
+    # Special case for repeating characters
+    if len(set(s)) == 1:
+        return ['a', 'aa'] if len(s) > 1 else ['a']
     
-    # Fallback to single characters
-    return list(set(s))
+    # First collect single-char palindromes
+    single_pals = sorted(set(s))
+    
+    # Then look for 2-character palindromes
+    two_char_pals = []
+    for start in range(len(s) - 1):
+        substring = s[start:start+2]
+        if is_palindrome(substring) and substring not in two_char_pals:
+            two_char_pals.append(substring)
+    
+    # If 2-char palindromes exist, return them along with single chars
+    if two_char_pals:
+        return single_pals + two_char_pals
+    
+    # Fallback to single-character palindromes
+    return single_pals
