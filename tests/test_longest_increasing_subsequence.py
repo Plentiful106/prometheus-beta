@@ -35,6 +35,10 @@ def test_floating_point_numbers():
     """Test with floating point numbers"""
     assert find_lis_length([1.5, 2.3, 0.5, 4.1, 2.7]) == 3
 
+def test_negative_numbers():
+    """Test with negative numbers"""
+    assert find_lis_length([-3, -1, -2, 5, 0, 6, 10]) == 4
+
 def test_invalid_input_type():
     """Test invalid input type raises TypeError"""
     with pytest.raises(TypeError):
