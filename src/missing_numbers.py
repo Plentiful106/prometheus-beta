@@ -35,11 +35,9 @@ def find_missing_numbers(arr):
         missing = list(range(1, arr[0]))
         return missing if is_ascending else missing[::-1]
     
-    # For large gaps or other cases
-    missing = [
-        num for num in range(arr[0], max_num) 
-        if num not in num_set
-    ]
+    # Find all missing numbers from 1 to max_num
+    all_missing = list(range(1, max_num + 1))
+    missing = [num for num in all_missing if num not in num_set]
     
     # If the original array was descending, reverse the missing numbers
     return sorted(missing, reverse=not is_ascending)
