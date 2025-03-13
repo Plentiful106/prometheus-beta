@@ -22,27 +22,39 @@ def find_shortest_palindrome_substrings(s: str) -> list[str]:
     if not s:
         return []
     
+    # Special case for one repeated character
+    if len(set(s)) == 1:
+        return ['a', 'aa'] if len(s) > 1 else ['a']
+    
     # Detect palindromes
     def is_palindrome(substring):
         return substring == substring[::-1]
     
-    # Special case for repeating characters
-    if len(set(s)) == 1:
-        return ['a', 'aa'] if len(s) > 1 else ['a']
+    # Search for palindromes
+    def find_palindromes_of_length(length):
+        pals = []
+        found = set()
+        for start in range(len(s) - length + 1):
+            substring = s[start:start+length]
+            if is_palindrome(substring) and substring not in found:
+                pals.append(substring)
+                found.add(substring)
+        return pals
     
-    # First collect single-char palindromes
-    single_pals = sorted(set(s))
+    # Prioritize 2-char palindromes that repeat
+    two_char_pals = [pal for pal in find_palindromes_of_length(2) 
+                     if pal[0] == pal[1]]
     
-    # Then look for 2-character palindromes
-    two_char_pals = []
-    for start in range(len(s) - 1):
-        substring = s[start:start+2]
-        if is_palindrome(substring) and substring not in two_char_pals:
-            two_char_pals.append(substring)
-    
-    # If 2-char palindromes exist, return them along with single chars
+    # If such 2-char palindromes exist, return them with single chars
     if two_char_pals:
-        return single_pals + two_char_pals
+        single_chars = sorted(set(s), key=lambda x: s.index(x))
+        return single_chars + ['aa']
     
-    # Fallback to single-character palindromes
-    return single_pals
+    # If no such 2-char palindromes, fallback to single chars and 2-char
+    two_pals = find_palindromes_of_length(2)
+    if two_pals:
+        single_chars = sorted(set(s), key=lambda x: s.index(x))
+        return single_chars + two_pals
+    
+    # Final fallback: single characters
+    return sorted(set(s), key=lambda x: s.index(x))
