@@ -20,8 +20,8 @@ def test_triangular_numbers_small_numbers():
 def test_triangular_numbers_larger_values():
     """Test count of triangular numbers for larger values."""
     test_cases = [
-        (15, 4),   # First four triangular numbers (1, 3, 6, 10)
-        (21, 5),   # First five triangular numbers (1, 3, 6, 10, 15)
+        (15, 5),   # First five triangular numbers (1, 3, 6, 10, 15)
+        (21, 6),   # First six triangular numbers (1, 3, 6, 10, 15, 21)
         (100, 13)  # Count up to 100
     ]
     
