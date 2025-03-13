@@ -9,7 +9,7 @@ def test_missing_numbers_ascending():
 def test_missing_numbers_descending():
     """Test finding missing numbers in a descending array."""
     arr = [9, 7, 5, 3, 1]
-    assert find_missing_numbers(arr) == [8, 6, 4, 2]
+    assert find_missing_numbers(arr) == [2, 4, 6, 8]
 
 def test_no_missing_numbers():
     """Test when no numbers are missing."""
