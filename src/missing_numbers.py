@@ -25,7 +25,7 @@ def find_missing_numbers(arr):
         arr = sorted(arr, reverse=True)
     
     # Find the range of numbers
-    min_num = 1
+    min_num = arr[0]
     max_num = arr[-1]
     
     # Create a set of the input array for efficient lookup
