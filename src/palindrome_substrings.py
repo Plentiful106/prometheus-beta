@@ -26,32 +26,35 @@ def find_shortest_palindrome_substrings(s: str) -> list[str]:
     def is_palindrome(substring):
         return substring == substring[::-1]
     
-    # Start with single characters as the shortest possible palindromes
-    min_length = 1
     palindromes = []
-    found_palindromes = set()
+    found_single_chars = set()
+    found_multi_chars = set()
     
-    while True:
+    # First pass: single characters
+    for i in range(len(s)):
+        if s[i] not in found_single_chars:
+            palindromes.append(s[i])
+            found_single_chars.add(s[i])
+    
+    # Second pass: two or more character palindromes
+    for length in range(2, len(s) + 1):
         current_palindromes = []
-        
-        # Check all substrings of current length
-        for start in range(len(s) - min_length + 1):
-            substring = s[start:start+min_length]
-            
-            # Check if substring is a palindrome
-            if is_palindrome(substring) and substring not in found_palindromes:
+        for start in range(len(s) - length + 1):
+            substring = s[start:start+length]
+            if is_palindrome(substring) and substring not in found_multi_chars:
                 current_palindromes.append(substring)
-                found_palindromes.add(substring)
+                found_multi_chars.add(substring)
         
-        # If we found palindromes, return them
+        # If we found 2-char palindromes, return them along with single chars
         if current_palindromes:
-            return list(dict.fromkeys(current_palindromes))
-        
-        # Increment length if no palindromes found
-        min_length += 1
-        
-        # Safety check to prevent infinite loop
-        if min_length > len(s):
-            break
+            # Only keep the unique 2-character palindromes
+            unique_current = []
+            for pal in current_palindromes:
+                if pal not in found_multi_chars:
+                    unique_current.append(pal)
+                    found_multi_chars.add(pal)
+            
+            if unique_current:
+                return palindromes + unique_current
     
-    return []
+    return palindromes
