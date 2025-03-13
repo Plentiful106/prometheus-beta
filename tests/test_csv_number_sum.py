@@ -11,7 +11,7 @@ def test_empty_string():
 
 def test_single_number():
     """Test a CSV with a single number."""
-    assert sum_csv_number_sum('42') == 42
+    assert sum_csv_numbers('42') == 42
 
 def test_numbers_with_spaces():
     """Test CSV with numbers that have surrounding spaces."""
