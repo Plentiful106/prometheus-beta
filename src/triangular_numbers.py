@@ -30,11 +30,13 @@ def count_triangular_numbers(n):
     
     # Find the count of triangular numbers
     count = 0
+    triangular_number = 0
     k = 1
     
     # Generate triangular numbers until they exceed n
-    while k * (k + 1) // 2 <= n:
+    while triangular_number <= n:
         count += 1
         k += 1
+        triangular_number = k * (k - 1) // 2
     
-    return count
+    return count - 1  # Subtract 1 to get the correct count
