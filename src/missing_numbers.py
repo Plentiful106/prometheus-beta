@@ -24,20 +24,16 @@ def find_missing_numbers(arr):
     if not is_ascending:
         arr = sorted(arr, reverse=True)
     
-    # Find the minimum and maximum
-    max_num = arr[-1]
-    
-    # Create a set of the input array for efficient lookup
-    num_set = set(arr)
-    
     # Special case for single element array
     if len(arr) == 1:
         missing = list(range(1, arr[0]))
         return missing if is_ascending else missing[::-1]
     
-    # Find all missing numbers from 1 to max_num
-    all_missing = list(range(1, max_num + 1))
-    missing = [num for num in all_missing if num not in num_set]
+    # Find missing numbers within the range of the array
+    missing = [
+        num for num in range(1, arr[-1]) 
+        if num not in arr
+    ]
     
     # If the original array was descending, reverse the missing numbers
     return sorted(missing, reverse=not is_ascending)
