@@ -28,10 +28,12 @@ def find_missing_numbers(arr):
     min_num = arr[0]
     max_num = arr[-1]
     
-    # Find missing numbers between 1 and the maximum number
+    # Create a set of the input array for efficient lookup
     num_set = set(arr)
+    
+    # Find missing numbers within the range of the input array
     missing = [
-        num for num in range(1, max_num + 1) 
+        num for num in range(min_num, max_num + 1) 
         if num not in num_set
     ]
     
