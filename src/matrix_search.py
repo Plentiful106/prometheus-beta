@@ -16,24 +16,23 @@ def search_matrix(matrix, target):
     Time Complexity: O(m * n), where m is number of rows and n is number of columns
     Space Complexity: O(1)
     """
-    # Validate input
-    if not matrix or not isinstance(matrix, list):
-        return False
-    
-    if not all(isinstance(row, list) for row in matrix):
+    # Validate input type
+    if not isinstance(matrix, list):
         raise TypeError("Matrix must be a list of lists")
     
+    # Handle empty matrix
     if not matrix or not matrix[0]:
         return False
     
-    # Check if all elements are integers
-    try:
-        for row in matrix:
-            for elem in row:
-                if not isinstance(elem, (int, float)):
-                    raise TypeError("Matrix must contain only numeric values")
-    except TypeError:
-        raise
+    # Check if matrix is a list of lists
+    if not all(isinstance(row, list) for row in matrix):
+        raise TypeError("Matrix must be a list of lists")
+    
+    # Check if all elements are numeric
+    for row in matrix:
+        for elem in row:
+            if not isinstance(elem, (int, float)):
+                raise TypeError("Matrix must contain only numeric values")
     
     # Perform matrix search
     for row in matrix:
