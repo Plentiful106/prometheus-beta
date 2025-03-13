@@ -22,22 +22,36 @@ def find_shortest_palindrome_substrings(s: str) -> list[str]:
     if not s:
         return []
     
-    # Find all palindromic substrings
-    palindromes = []
-    n = len(s)
+    # Find palindromes
+    def is_palindrome(substring):
+        return substring == substring[::-1]
     
-    # Check all possible substring lengths and starting positions
-    for length in range(1, n + 1):
+    # Start with single characters as the shortest possible palindromes
+    min_length = 1
+    palindromes = []
+    found_palindromes = set()
+    
+    while True:
         current_palindromes = []
-        for start in range(n - length + 1):
-            substring = s[start:start+length]
+        
+        # Check all substrings of current length
+        for start in range(len(s) - min_length + 1):
+            substring = s[start:start+min_length]
             
             # Check if substring is a palindrome
-            if substring == substring[::-1]:
+            if is_palindrome(substring) and substring not in found_palindromes:
                 current_palindromes.append(substring)
+                found_palindromes.add(substring)
         
-        # If we found palindromes of this length, return them
+        # If we found palindromes, return them
         if current_palindromes:
-            return current_palindromes
+            return list(dict.fromkeys(current_palindromes))
+        
+        # Increment length if no palindromes found
+        min_length += 1
+        
+        # Safety check to prevent infinite loop
+        if min_length > len(s):
+            break
     
     return []
