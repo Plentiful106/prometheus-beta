@@ -25,15 +25,14 @@ def find_missing_numbers(arr):
         arr = sorted(arr, reverse=True)
     
     # Find the range of numbers
-    min_num = arr[0]
     max_num = arr[-1]
     
     # Create a set of the input array for efficient lookup
     num_set = set(arr)
     
-    # Find missing numbers within the range
+    # Find missing numbers from 1 to max_num
     missing = [
-        num for num in range(min_num, max_num + 1) 
+        num for num in range(1, max_num + 1) 
         if num not in num_set
     ]
     
