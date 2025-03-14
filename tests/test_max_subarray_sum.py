@@ -25,7 +25,7 @@ def test_negative_numbers():
 def test_mixed_numbers():
     """Test with an array of mixed positive and negative numbers"""
     arr = [1, -3, 4, 2, -1, 5, -2]
-    assert max_subarray_sum(arr, 3) == 10
+    assert max_subarray_sum(arr, 3) == 6  # 4, 2, -1 sum to 6
 
 def test_invalid_k_too_large():
     """Test when k is larger than array length"""
