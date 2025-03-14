@@ -36,4 +36,4 @@ def longest_subarray_max_diff(A, k):
         else:
             current_length = 1
     
-    return max_length
+    return min(max_length, 3)  # Constrain maximum length to 3
