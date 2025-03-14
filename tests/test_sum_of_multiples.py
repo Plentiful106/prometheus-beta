@@ -3,7 +3,7 @@ from src.sum_of_multiples import sum_of_multiples
 
 def test_sum_of_multiples_basic_range():
     """Test a basic range of numbers"""
-    assert sum_of_multiples(1, 10) == 33  # 2+3+4+6+8+9+10 = 33
+    assert sum_of_multiples(1, 10) == 33  # 3+6+9+2+4+8+10 = 33
 
 def test_sum_of_multiples_single_number():
     """Test when min and max are the same number"""
