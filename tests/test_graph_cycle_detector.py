@@ -54,7 +54,7 @@ def test_cycle_detection_two_nodes_cycle():
         0: [1],
         1: [0]
     }
-    # In an undirected graph, this is a cycle
+    # Every connected graph with at least 2 nodes forms a cycle in undirected representation
     assert detect_cycle_in_undirected_graph(graph) == True
 
 def test_cycle_detection_empty_graph_raises_error():
