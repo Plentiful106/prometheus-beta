@@ -43,17 +43,15 @@ def detect_cycle_in_undirected_graph(graph: Dict[int, List[int]]) -> bool:
         
         return False
     
-    # Track globally visited nodes to avoid redundant traversals
-    global_visited: Set[int] = set()
+    # Track all visited nodes
+    visited: Set[int] = set()
     
-    # Try DFS from each unvisited node to handle disconnected graphs
+    # Try DFS from each node
     for node in graph:
-        if node not in global_visited:
-            # Use a new visited set for each connected component
-            visited: Set[int] = set()
+        # If the node hasn't been visited, start DFS
+        if node not in visited:
+            # If a cycle is found in this component, return True
             if dfs(node, visited, -1):
                 return True
-            # Mark all nodes in this component as visited
-            global_visited.update(visited)
     
     return False
