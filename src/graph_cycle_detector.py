@@ -44,14 +44,18 @@ def detect_cycle_in_undirected_graph(graph: Dict[int, List[int]]) -> bool:
         
         return False
     
-    # Track visited nodes to avoid redundant exploration
-    visited: Set[int] = set()
+    # Track globally visited nodes to ensure we cover all components
+    global_visited: Set[int] = set()
     
-    # Check each node that hasn't been visited
+    # Check if all nodes can form a cycle
     for node in graph:
-        if node not in visited:
-            # If a cycle is found in this component, return True
+        if node not in global_visited:
+            # Create a new visited set for this component
+            visited: Set[int] = set()
+            # If a cycle is found, return True
             if dfs(node, -1, visited):
                 return True
+            # Mark all nodes in this component as visited
+            global_visited.update(visited)
     
     return False
