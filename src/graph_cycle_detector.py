@@ -17,41 +17,46 @@ def detect_cycle_in_undirected_graph(graph: Dict[int, List[int]]) -> bool:
     if not graph:
         raise ValueError("Graph cannot be empty")
     
-    def dfs(node: int, visited: Set[int], parent: int) -> bool:
+    def has_back_edge(node: int, parent: int, visited: Set[int]) -> bool:
         """
-        Depth-first search to detect cycle.
+        Detect if a graph contains a back edge (indicating a cycle).
         
         Args:
             node (int): Current node being explored
-            visited (Set[int]): Set of visited nodes
             parent (int): Parent node of the current node
+            visited (Set[int]): Set of visited nodes
         
         Returns:
-            bool: True if a cycle is detected, False otherwise
+            bool: True if a back edge is found, False otherwise
         """
         visited.add(node)
         
-        # Explore all adjacent nodes
         for neighbor in graph.get(node, []):
-            # If neighbor hasn't been visited, explore it
+            # If neighbor hasn't been visited, recursively explore
             if neighbor not in visited:
-                if dfs(neighbor, visited, node):
+                if has_back_edge(neighbor, node, visited):
                     return True
-            # If neighbor is already visited and is not the parent, it's a back edge (cycle)
+            # If neighbor is visited and is not the parent, it's a back edge
             elif neighbor != parent:
                 return True
         
         return False
     
-    # Track all visited nodes
-    visited: Set[int] = set()
+    # Track nodes we've already processed to avoid redundant work
+    processed: Set[int] = set()
     
-    # Try DFS from each node
-    for node in graph:
-        # If the node hasn't been visited, start DFS
-        if node not in visited:
-            # If a cycle is found in this component, return True
-            if dfs(node, visited, -1):
+    # Iterate through each node in the graph
+    for start_node in graph:
+        # If this node hasn't been processed yet
+        if start_node not in processed:
+            # Create a new visited set for each component
+            visited: Set[int] = set()
+            
+            # Check for a cycle starting from this node
+            if has_back_edge(start_node, -1, visited):
                 return True
+            
+            # Mark all nodes in this component as processed
+            processed.update(visited)
     
     return False
