@@ -32,7 +32,7 @@ def detect_cycle_in_undirected_graph(graph: Dict[int, List[int]]) -> bool:
         visited.add(node)
         
         # Explore all adjacent nodes
-        for neighbor in graph[node]:
+        for neighbor in graph.get(node, []):
             # If neighbor hasn't been visited, recursively explore
             if neighbor not in visited:
                 if dfs(neighbor, visited, node):
