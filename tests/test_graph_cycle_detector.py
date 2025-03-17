@@ -25,9 +25,9 @@ def test_cycle_detection_multiple_components():
         0: [1],
         1: [0, 2],
         2: [1],
-        3: [4],
+        3: [4, 5],
         4: [3, 5],
-        5: [4]
+        5: [3, 4]
     }
     assert detect_cycle_in_undirected_graph(graph) == True
 
