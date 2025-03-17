@@ -33,29 +33,35 @@ def detect_cycle_in_undirected_graph(graph: Dict[int, List[int]]) -> bool:
         visited.add(node)
         
         # Check all neighbors of the current node
+        visited_neighbors = 0
         for neighbor in graph[node]:
             # If neighbor is not visited, explore it
             if neighbor not in visited:
                 if dfs(neighbor, node, visited):
                     return True
-            # If neighbor is visited and is not the parent, it's a back edge (cycle)
+            # Count visited neighbors (excluding parent)
             elif neighbor != parent:
-                return True
+                visited_neighbors += 1
         
-        return False
+        # If more than one neighbor is already visited (excluding parent), it's a cycle
+        return visited_neighbors > 0
     
-    # Track globally visited nodes to ensure we cover all components
+    # Track globally visited nodes
     global_visited: Set[int] = set()
     
-    # Check if all nodes can form a cycle
+    # Track if a cycle is found
+    cycle_found = False
+    
+    # Check each node that hasn't been visited
     for node in graph:
         if node not in global_visited:
             # Create a new visited set for this component
             visited: Set[int] = set()
-            # If a cycle is found, return True
-            if dfs(node, -1, visited):
-                return True
-            # Mark all nodes in this component as visited
+            # Check if a cycle exists in this component
+            component_has_cycle = dfs(node, -1, visited)
             global_visited.update(visited)
+            
+            # Update cycle_found if a cycle is found
+            cycle_found |= component_has_cycle
     
-    return False
+    return cycle_found
