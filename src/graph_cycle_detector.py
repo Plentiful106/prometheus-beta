@@ -38,7 +38,7 @@ def detect_cycle_in_undirected_graph(graph: Dict[int, List[int]]) -> bool:
             if neighbor not in visited:
                 if dfs(neighbor, node, visited):
                     return True
-            # If neighbor is visited and is not the parent
+            # If neighbor is visited and is not the parent, it's a back edge (cycle)
             elif neighbor != parent:
                 return True
         
