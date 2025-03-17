@@ -32,22 +32,15 @@ def detect_cycle_in_undirected_graph(graph: Dict[int, List[int]]) -> bool:
         # Mark current node as visited
         visited.add(node)
         
-        # Track the number of revisits (for cycles in small graphs)
-        revisit_count = 0
-        
         # Check all neighbors of the current node
         for neighbor in graph[node]:
             # If neighbor is not visited, explore it
             if neighbor not in visited:
                 if dfs(neighbor, node, visited):
                     return True
-            
-            # If neighbor is visited 
+            # If neighbor is visited and is not the parent, it's a back edge (cycle)
             elif neighbor != parent:
-                revisit_count += 1
-                # If revisited more than once, it's definitely a cycle
-                if revisit_count > 0:
-                    return True
+                return True
         
         return False
     
