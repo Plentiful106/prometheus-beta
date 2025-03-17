@@ -33,13 +33,14 @@ def detect_cycle_in_undirected_graph(graph: Dict[int, List[int]]) -> bool:
         
         # Explore all adjacent nodes
         for neighbor in graph.get(node, []):
+            # If neighbor has been visited and is not the parent, cycle detected
+            if neighbor in visited and neighbor != parent:
+                return True
+            
             # If neighbor hasn't been visited, recursively explore
             if neighbor not in visited:
                 if dfs(neighbor, visited, node):
                     return True
-            # If neighbor has been visited and is not the parent, cycle detected
-            elif neighbor != parent:
-                return True
         
         return False
     
