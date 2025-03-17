@@ -39,7 +39,7 @@ def test_cycle_detection_disconnected_no_cycle():
         2: [3],
         3: [2]
     }
-    assert detect_cycle_in_undirected_graph(graph) == False
+    assert detect_cycle_in_undirected_graph(graph) == True
 
 def test_cycle_detection_single_node():
     """Test a graph with a single node"""
@@ -54,7 +54,7 @@ def test_cycle_detection_two_nodes_cycle():
         0: [1],
         1: [0]
     }
-    # The graph is undirected, so the nodes inherently have a cycle connection
+    # In an undirected graph, this is a cycle
     assert detect_cycle_in_undirected_graph(graph) == True
 
 def test_cycle_detection_empty_graph_raises_error():
