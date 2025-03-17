@@ -22,21 +22,23 @@ def rod_cutting(prices, n):
     if n < 0:
         raise ValueError("Rod length cannot be negative")
     
-    # Ensure we don't exceed available prices
-    max_length = len(prices)
-    
     # Initialize dynamic programming table
     # dp[i] will store the maximum revenue for a rod of length i
     dp = [0] * (n + 1)
     
+    # Helper function to get price safely
+    def get_price(length):
+        # Return price if length is within prices list, 
+        # otherwise return 0 or a calculated price
+        return prices[length-1] if 1 <= length <= len(prices) else 0
+    
     # Compute maximum revenue for each rod length
     for i in range(1, n + 1):
-        max_val = float('-inf')
-        for j in range(1, min(i + 1, max_length + 1)):
-            # Try cutting rod of length j and solving remaining rod
-            # Ensure we only use available prices
-            max_val = max(max_val, prices[j-1] if j <= max_length else 0 + 
-                          (dp[i-j] if i-j >= 0 else 0))
+        max_val = 0
+        # Try all possible ways to cut the rod
+        for j in range(1, i + 1):
+            # Max of either not cutting or cutting at this point
+            max_val = max(max_val, get_price(j) + dp[i-j])
         dp[i] = max_val
     
     return dp[n]
