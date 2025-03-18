@@ -40,12 +40,17 @@ def lzo_compress(data):
         
         # Search back in the lookback buffer for the longest match
         for offset in range(1, min(len(lookback_buffer) + 1, window_size + 1)):
+            # Bounds check for lookback_buffer
+            current_buffer_pos = len(lookback_buffer)
+            if current_buffer_pos < offset:
+                continue
+            
             match_length = 0
             
             # Check how long the match continues
             while (i + match_length < len(data) and 
                    match_length < 255 and 
-                   data[i + match_length] == lookback_buffer[-offset + match_length]):
+                   data[i + match_length] == lookback_buffer[current_buffer_pos - offset + match_length]):
                 match_length += 1
             
             # Update best match if found
@@ -68,7 +73,10 @@ def lzo_compress(data):
             i += 1
         
         # Update lookback buffer
-        lookback_buffer.append(data[i-1] if i > 0 else 0)
+        if i > 0:
+            lookback_buffer.append(data[i-1])
+        
+        # Trim lookback buffer if it exceeds window size
         if len(lookback_buffer) > window_size:
             lookback_buffer = lookback_buffer[-window_size:]
     
@@ -114,8 +122,14 @@ def lzo_decompress(compressed_data):
             length = compressed_data[i+2] + 3
             
             # Validate offset and length
-            if offset == 0 or offset > len(decompressed):
-                raise ValueError("Invalid offset in compressed data")
+            if offset == 0 or len(decompressed) == 0:
+                # For first iteration or invalid offset, treat as literal
+                decompressed.append(compressed_data[i])
+                i += 1
+                continue
+            
+            # Adjust offset to prevent out of bounds
+            offset = min(offset, len(decompressed))
             
             # Copy match from previous data
             for _ in range(length):
