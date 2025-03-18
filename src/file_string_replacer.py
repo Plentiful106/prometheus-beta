@@ -34,9 +34,23 @@ def replace_string_in_file(file_path, old_string, new_string):
     except FileNotFoundError:
         raise FileNotFoundError(f"The file {file_path} does not exist")
 
-    # Count and perform replacements
-    replacements_count = file_contents.count(old_string)
-    modified_contents = file_contents.replace(old_string, new_string)
+    # Count and perform replacements (case-insensitive)
+    original_lower = file_contents.lower()
+    old_string_lower = old_string.lower()
+    replacements_count = original_lower.count(old_string_lower)
+
+    # Perform case-preserving replacement
+    def case_replace(match):
+        if match.group(0).islower():
+            return new_string.lower()
+        elif match.group(0).isupper():
+            return new_string.upper()
+        elif match.group(0)[0].isupper():
+            return new_string.capitalize()
+        return new_string
+
+    import re
+    modified_contents = re.sub(old_string, case_replace, file_contents, flags=re.IGNORECASE)
 
     # Write back to the file
     with open(file_path, 'w') as file:
