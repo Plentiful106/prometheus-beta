@@ -20,6 +20,9 @@ def compress(data):
         ValueError: If input is empty.
     """
     # Validate input
+    if data is None:
+        raise TypeError("Input cannot be None")
+    
     if not data:
         raise ValueError("Input data cannot be empty")
     
@@ -34,7 +37,7 @@ def compress(data):
     dictionary = {bytes([i]): i for i in range(256)}
     next_code = 256
     current_phrase = bytes([data[0]])
-    result = []
+    result = bytearray()
     
     # Compression algorithm
     for byte in data[1:]:
@@ -46,7 +49,8 @@ def compress(data):
             current_phrase = new_phrase
         else:
             # Output the code for the current phrase
-            result.append(dictionary[current_phrase])
+            code = dictionary[current_phrase]
+            result.extend(code.to_bytes(2, byteorder='big'))
             
             # Add the new phrase to the dictionary if room allows
             if next_code < 65536:  # Limit dictionary size
@@ -57,9 +61,9 @@ def compress(data):
             current_phrase = bytes([byte])
     
     # Output the last phrase
-    result.append(dictionary[current_phrase])
+    code = dictionary[current_phrase]
+    result.extend(code.to_bytes(2, byteorder='big'))
     
-    # Convert result to bytes
     return bytes(result)
 
 def decompress(compressed_data):
@@ -86,15 +90,21 @@ def decompress(compressed_data):
     # Initialize decompression variables
     dictionary = {i: bytes([i]) for i in range(256)}
     next_code = 256
-    result = []
+    result = bytearray()
     
-    # First code is always a single byte
-    current_code = compressed_data[0]
+    # Read first code (2 bytes)
+    current_code = int.from_bytes(compressed_data[:2], byteorder='big')
     current_phrase = dictionary[current_code]
     result.extend(current_phrase)
     
     # Decompression algorithm
-    for code in compressed_data[1:]:
+    for i in range(2, len(compressed_data), 2):
+        # Retrieve next code from compressed data
+        try:
+            code = int.from_bytes(compressed_data[i:i+2], byteorder='big')
+        except IndexError:
+            raise ValueError("Invalid compressed data length")
+        
         # Retrieve phrase for current code
         if code in dictionary:
             new_phrase = dictionary[code]
