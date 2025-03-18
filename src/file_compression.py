@@ -35,6 +35,6 @@ def calculate_compression_ratio(file_path):
     compressed_content = zlib.compress(file_content)
     compressed_size = len(compressed_content)
     
-    # Calculate and return compression ratio
-    compression_ratio = compressed_size / original_size
+    # Ensure we get a ratio between 0 and 1
+    compression_ratio = min(1, compressed_size / original_size)
     return compression_ratio
