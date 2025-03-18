@@ -1,4 +1,5 @@
 from typing import List, Optional
+from itertools import combinations
 
 def min_steps_to_target_sum(numbers: List[int], target: int) -> Optional[int]:
     """
@@ -20,36 +21,23 @@ def min_steps_to_target_sum(numbers: List[int], target: int) -> Optional[int]:
     if not numbers:
         raise ValueError("Input list cannot be empty")
     
-    # Use dynamic programming to find minimum steps
-    # We'll use a set to track all possible sums at each step
-    current_sums = {0}
-    steps = 0
+    # If the target is in the original list, return 1
+    if target in numbers:
+        return 1
     
-    # We'll sort the numbers to optimize processing
-    sorted_nums = sorted(numbers)
-    
-    while current_sums:
-        # If target is in current sums, we've found the minimum steps
-        if target in current_sums:
-            return steps
-        
-        # If we've used all numbers and can't reach target, return None
-        if steps >= len(numbers):
-            return None
-        
-        # Generate new possible sums by adding or subtracting the next number
-        next_num = sorted_nums[steps]
-        new_sums = set()
-        
-        for current_sum in current_sums:
-            # Try adding the number
-            new_sums.add(current_sum + next_num)
-            # Try subtracting the number
-            new_sums.add(current_sum - next_num)
-        
-        # Update current sums and increment steps
-        current_sums = new_sums
-        steps += 1
+    # Check all possible combinations
+    for num_steps in range(2, len(numbers) + 1):
+        for combo in combinations(numbers, num_steps):
+            # Try all possible sign combinations
+            from itertools import product
+            
+            for signs in product([1, -1], repeat=num_steps):
+                # Compute sum with current sign combination
+                current_sum = sum(num * sign for num, sign in zip(combo, signs))
+                
+                # If we reached the target, return number of steps
+                if current_sum == target:
+                    return num_steps
     
     # If no solution found
     return None
