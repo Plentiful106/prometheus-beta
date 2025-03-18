@@ -33,14 +33,14 @@ def to_dot_case(input_string):
         return ""
     
     # Remove special characters and replace with spaces
-    cleaned_string = re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+    cleaned_string = re.sub(r'[^a-zA-Z0-9\s_-]', '', input_string)
     
     # Handle camel and pascal case by inserting spaces before capital letters
     # that are preceded by a lowercase letter or number
     spaced_string = re.sub(r'(?<=[a-z0-9])(?=[A-Z])', ' ', cleaned_string)
     
     # Replace various separators with spaces
-    normalized = spaced_string.replace('_', ' ').replace('-', ' ')
+    normalized = re.sub(r'[_-]', ' ', spaced_string)
     
     # Split the string into words, convert to lowercase
     words = normalized.split()
