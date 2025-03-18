@@ -26,11 +26,8 @@ def lzo_compress(data):
     if not data:
         raise ValueError("Input data cannot be empty")
     
-    # If data is too short or too random to effectively compress, return original
-    unique_chars = len(set(data))
-    is_random = unique_chars > len(data) * 0.9
-    
-    if is_random or len(data) < 32:
+    # If data is too short, return original
+    if len(data) < 10:
         return bytearray(data)
     
     # Compression variables
@@ -40,40 +37,41 @@ def lzo_compress(data):
     # Main compression loop
     i = 0
     while i < len(data):
-        # Literal flag if no good match found
-        found_match = False
+        # Try to find the longest match in previous data
+        best_match_length = 0
+        best_match_offset = 0
         
-        # Look back to a maximum of window_size previous bytes 
-        max_lookback = min(i, window_size)
-        for j in range(1, max_lookback + 1):
+        # Look back in the data, maximum window_size
+        for j in range(max(0, i - window_size), i):
             match_length = 0
             while (i + match_length < len(data) and 
-                   match_length < 255 and 
-                   data[i + match_length] == data[i - j + match_length]):
+                   data[i + match_length] == data[j + match_length]):
                 match_length += 1
+                # Prevent excessive matching
+                if match_length >= 255:
+                    break
             
-            # If match is found
-            if match_length > 2:
-                # Compressed match
-                compressed.extend([
-                    match_length,  # Length of match
-                    j >> 8,  # High byte of offset
-                    j & 0xFF  # Low byte of offset
-                ])
-                i += match_length
-                found_match = True
-                break
+            # Update best match
+            if match_length > best_match_length:
+                best_match_length = match_length
+                best_match_offset = i - j
         
-        # If no match found, add literal
-        if not found_match:
+        # If a good match is found
+        if best_match_length > 3:
+            # Encode match with length and offset
+            compressed.extend([
+                best_match_length - 3,  # Length 
+                best_match_offset >> 8,  # High byte of offset
+                best_match_offset & 0xFF  # Low byte of offset
+            ])
+            i += best_match_length
+        else:
+            # Encode literal byte
             compressed.append(data[i])
             i += 1
     
-    # If compressed data is not significantly smaller, return original
-    if len(compressed) >= len(data):
-        return bytearray(data)
-    
-    return compressed
+    # Return compressed or original data
+    return compressed if len(compressed) < len(data) else bytearray(data)
 
 def lzo_decompress(compressed_data):
     """
@@ -96,8 +94,8 @@ def lzo_decompress(compressed_data):
     if not compressed_data:
         raise ValueError("Input data cannot be empty")
     
-    # If compressed data is the same length as potential original, return it
-    if len(compressed_data) == len(compressed_data):
+    # If data seems uncompressed, return it
+    if len(compressed_data) <= 10:
         return bytearray(compressed_data)
     
     # Decompression variables
@@ -105,43 +103,34 @@ def lzo_decompress(compressed_data):
     i = 0
     
     while i < len(compressed_data):
-        # Ensure we have data to read
-        if i + 2 >= len(compressed_data):
-            decompressed.append(compressed_data[i])
-            i += 1
-            continue
-        
-        # Check if it's a match or literal
-        if compressed_data[i] > 2:
+        # Check for match or literal
+        if i + 2 < len(compressed_data) and compressed_data[i] < 32:
             # Match encoding
-            match_length = compressed_data[i]
             try:
+                match_length = compressed_data[i] + 3
                 offset = (compressed_data[i+1] << 8) | compressed_data[i+2]
-            except IndexError:
-                # Not enough bytes, treat as literal
-                decompressed.append(compressed_data[i])
-                i += 1
-                continue
-            
-            # Validate match
-            if offset == 0 or offset > len(decompressed):
-                decompressed.append(compressed_data[i])
-                i += 1
-                continue
-            
-            # Reconstruct match
-            for _ in range(match_length):
-                try:
+                
+                # Validate match parameters
+                if offset == 0 or offset > len(decompressed):
+                    # Invalid match, treat as literal
+                    decompressed.append(compressed_data[i])
+                    i += 1
+                    continue
+                
+                # Copy match bytes
+                for _ in range(match_length):
+                    if len(decompressed) < offset:
+                        break
                     decompressed.append(decompressed[-offset])
-                except IndexError:
-                    # Unexpected end, stop compression
-                    break
-            
-            i += 3
+                
+                i += 3
+            except IndexError:
+                # Incomplete match
+                decompressed.append(compressed_data[i])
+                i += 1
         else:
             # Literal byte
             decompressed.append(compressed_data[i])
             i += 1
     
-    # If decompressed data doesn't match what we expect, return original
-    return decompressed if decompressed else bytearray(compressed_data)
+    return decompressed
