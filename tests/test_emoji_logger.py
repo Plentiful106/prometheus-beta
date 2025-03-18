@@ -10,13 +10,13 @@ class TestEmojiLogger:
         """Set up a fresh logger for each test method."""
         self.logger = EmojiLogger(name='TestLogger')
         
-        # Capture stdout for testing log output
+        # Capture stderr for testing log output
         self.captured_output = io.StringIO()
-        sys.stdout = self.captured_output
+        sys.stderr = self.captured_output
     
     def teardown_method(self):
-        """Reset stdout after each test."""
-        sys.stdout = sys.__stdout__
+        """Reset stderr after each test."""
+        sys.stderr = sys.__stderr__
     
     def test_logger_initialization(self):
         """Test that logger is created with correct default settings."""
