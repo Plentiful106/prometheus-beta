@@ -39,27 +39,26 @@ def find_single_unique_element(arr):
         return arr[-1]
     
     # Binary search approach
-    left, right = 1, len(arr) - 2
+    left, right = 0, len(arr) - 1
     
     while left <= right:
         mid = left + (right - left) // 2
         
         # Check if mid is not part of a pair
-        if arr[mid] != arr[mid-1] and arr[mid] != arr[mid+1]:
-            return arr[mid]
-        
-        # Find which half to search
-        # Check if mid is in the first pair of its set
         if mid % 2 == 1:
             mid -= 1
         
-        # If mid is in first pair of its group
-        if arr[mid] == arr[mid+1]:
-            # Unique is on the right
+        # Check if this mid is the start of a pair
+        if mid + 1 < len(arr) and arr[mid] == arr[mid+1]:
+            # Unique is on the right side
             left = mid + 2
         else:
-            # Unique is on the left
-            right = mid - 1
+            # Unique is on this side or to the left
+            right = mid
+        
+        # If only one element left, that's our unique element
+        if left == right:
+            return arr[left]
     
     # This should not be reached if input is valid
     raise ValueError("No unique element found")
