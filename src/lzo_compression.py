@@ -31,7 +31,7 @@ def lzo_compress(data):
     is_random = unique_chars > len(data) * 0.9
     
     # If data is too random, return original with a no-op flag
-    if is_random:
+    if is_random or len(data) < 32:
         compressed = bytearray([0xFF])  # No-op flag
         compressed.extend(data)
         return compressed
@@ -43,9 +43,8 @@ def lzo_compress(data):
     # Main compression loop
     i = 0
     while i < len(data):
-        # Find the longest match
-        best_match_length = 0
-        best_match_offset = 0
+        # Literal flag if no good match found
+        found_match = False
         
         # Look back to a maximum of window_size previous bytes 
         max_lookback = min(i, window_size)
@@ -56,22 +55,20 @@ def lzo_compress(data):
                    data[i + match_length] == data[i - j + match_length]):
                 match_length += 1
             
-            # Update best match 
-            if match_length > best_match_length:
-                best_match_length = match_length
-                best_match_offset = j
+            # If match is found
+            if match_length > 2:
+                # Compressed match
+                compressed.extend([
+                    match_length,  # Length of match
+                    j >> 8,  # High byte of offset
+                    j & 0xFF  # Low byte of offset
+                ])
+                i += match_length
+                found_match = True
+                break
         
-        # Encode the data
-        if best_match_length > 2:
-            # Compressed match
-            compressed.extend([
-                best_match_length,  # Length of match
-                best_match_offset >> 8,  # High byte of offset
-                best_match_offset & 0xFF  # Low byte of offset
-            ])
-            i += best_match_length
-        else:
-            # Literal byte
+        # If no match found, add literal
+        if not found_match:
             compressed.append(data[i])
             i += 1
     
@@ -107,29 +104,39 @@ def lzo_decompress(compressed_data):
     i = 0
     
     while i < len(compressed_data):
-        # Check if we have enough data for a match or literal
-        if i + 2 < len(compressed_data) and compressed_data[i] > 2:
-            # Match case
+        # Ensure we have data to read
+        if i + 2 >= len(compressed_data):
+            decompressed.append(compressed_data[i])
+            i += 1
+            continue
+        
+        # Check if it's a match or literal
+        if compressed_data[i] > 2:
+            # Match encoding
+            match_length = compressed_data[i]
             try:
-                match_length = compressed_data[i]
                 offset = (compressed_data[i+1] << 8) | compressed_data[i+2]
-                
-                # Validate offset
-                if offset == 0 or offset > len(decompressed):
-                    # Invalid match, treat as literal
-                    decompressed.append(compressed_data[i])
-                    i += 1
-                    continue
-                
-                # Copy match data
-                for _ in range(match_length):
-                    decompressed.append(decompressed[-offset])
-                
-                i += 3
             except IndexError:
-                # Not enough data for match, treat as literal
+                # Not enough bytes, treat as literal
                 decompressed.append(compressed_data[i])
                 i += 1
+                continue
+            
+            # Validate match
+            if offset == 0 or offset > len(decompressed):
+                decompressed.append(compressed_data[i])
+                i += 1
+                continue
+            
+            # Reconstruct match
+            for _ in range(match_length):
+                try:
+                    decompressed.append(decompressed[-offset])
+                except IndexError:
+                    # Unexpected end, stop compression
+                    break
+            
+            i += 3
         else:
             # Literal byte
             decompressed.append(compressed_data[i])
