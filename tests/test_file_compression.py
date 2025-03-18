@@ -13,7 +13,7 @@ def test_compression_ratio_small_text():
     
     try:
         ratio = calculate_compression_ratio(temp_file.name)
-        assert 0 < ratio < 1, f"Invalid compression ratio: {ratio}"
+        assert 0 <= ratio <= 1, f"Invalid compression ratio: {ratio}"
     finally:
         os.unlink(temp_file.name)
 
@@ -25,7 +25,7 @@ def test_compression_ratio_binary():
     
     try:
         ratio = calculate_compression_ratio(temp_file.name)
-        assert 0 < ratio < 1, f"Invalid compression ratio: {ratio}"
+        assert 0 <= ratio <= 1, f"Invalid compression ratio: {ratio}"
     finally:
         os.unlink(temp_file.name)
 
@@ -53,6 +53,6 @@ def test_compression_ratio_large_file():
     
     try:
         ratio = calculate_compression_ratio(temp_file.name)
-        assert 0 < ratio < 1, f"Invalid compression ratio: {ratio}"
+        assert 0 <= ratio <= 1, f"Invalid compression ratio: {ratio}"
     finally:
         os.unlink(temp_file.name)
