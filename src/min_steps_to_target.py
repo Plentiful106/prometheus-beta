@@ -1,5 +1,5 @@
 from typing import List, Optional
-from itertools import combinations
+from itertools import combinations, product
 
 def min_steps_to_target_sum(numbers: List[int], target: int) -> Optional[int]:
     """
@@ -21,16 +21,22 @@ def min_steps_to_target_sum(numbers: List[int], target: int) -> Optional[int]:
     if not numbers:
         raise ValueError("Input list cannot be empty")
     
-    # If the target is in the original list, return 1
+    # Special case: single number same as target
     if target in numbers:
         return 1
     
+    # Remove duplicates but preserve order
+    unique_nums = []
+    seen = set()
+    for num in numbers:
+        if num not in seen:
+            unique_nums.append(num)
+            seen.add(num)
+    
     # Check all possible combinations
-    for num_steps in range(2, len(numbers) + 1):
-        for combo in combinations(numbers, num_steps):
+    for num_steps in range(2, len(unique_nums) + 1):
+        for combo in combinations(unique_nums, num_steps):
             # Try all possible sign combinations
-            from itertools import product
-            
             for signs in product([1, -1], repeat=num_steps):
                 # Compute sum with current sign combination
                 current_sum = sum(num * sign for num, sign in zip(combo, signs))
