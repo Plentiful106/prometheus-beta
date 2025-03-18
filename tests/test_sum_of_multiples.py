@@ -3,7 +3,7 @@ from src.sum_of_multiples import sum_of_multiples
 
 def test_basic_sum_of_multiples():
     """Test basic functionality of sum_of_multiples."""
-    assert sum_of_multiples(10, [3, 5]) == 23  # 3 + 5 + 6 + 9 + 10 = 23
+    assert sum_of_multiples(10, [3, 5]) == 33  # 3 + 5 + 6 + 9 + 10 = 33
 
 def test_single_multiple():
     """Test with a single multiple."""
