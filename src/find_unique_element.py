@@ -32,28 +32,34 @@ def find_single_unique_element(arr):
     if len(arr) == 1:
         return arr[0]
     
+    # Handle first and last element edge cases
+    if arr[0] != arr[1]:
+        return arr[0]
+    if arr[-1] != arr[-2]:
+        return arr[-1]
+    
     # Binary search approach
-    left, right = 0, len(arr) - 1
+    left, right = 1, len(arr) - 2
     
     while left <= right:
-        # Handle edge cases at the start and end of the array
-        if left == right:
-            return arr[left]
-        
-        # Check if mid is the unique element
         mid = left + (right - left) // 2
         
-        # Check if mid is even or odd index
+        # Check if mid is not part of a pair
+        if arr[mid] != arr[mid-1] and arr[mid] != arr[mid+1]:
+            return arr[mid]
+        
+        # Find which half to search
+        # Check if mid is in the first pair of its set
         if mid % 2 == 1:
             mid -= 1
         
-        # Compare pairs around mid
-        if arr[mid] == arr[mid + 1]:
-            # Unique element is on the right side
+        # If mid is in first pair of its group
+        if arr[mid] == arr[mid+1]:
+            # Unique is on the right
             left = mid + 2
         else:
-            # Unique element is on the left side or at mid
-            right = mid
+            # Unique is on the left
+            right = mid - 1
     
     # This should not be reached if input is valid
     raise ValueError("No unique element found")
