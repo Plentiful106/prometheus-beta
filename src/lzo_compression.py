@@ -57,16 +57,19 @@ def lzo_compress(data):
         
         # Encode the match or literal
         if best_match_length > 2:
-            # Encode match (offset, length)
+            # Encode match (length, offset)
             compressed.extend([
+                best_match_length - 3,  # Length adjustment
                 best_match_offset >> 8,  # High byte of offset
                 best_match_offset & 0xFF,  # Low byte of offset
-                best_match_length - 3  # Length adjustment
             ])
             i += best_match_length
         else:
-            # Encode literal byte
-            compressed.append(data[i])
+            # Encode literal byte with flag
+            if data[i] < 32:
+                compressed.extend([0, data[i]])
+            else:
+                compressed.append(data[i])
             i += 1
     
     return compressed
@@ -97,43 +100,36 @@ def lzo_decompress(compressed_data):
     i = 0
     
     while i < len(compressed_data):
-        # Check if we can read next bytes
-        if i + 2 >= len(compressed_data):
-            # Literal byte
-            decompressed.append(compressed_data[i])
-            i += 1
-            continue
-        
         # Check for match or literal
-        if compressed_data[i] < 32:  # Match encoding
-            # Ensure sufficient data for match
+        if compressed_data[i] < 32:
+            # Match encoding
             if i + 2 >= len(compressed_data):
+                # Incomplete match, treat as literal
                 decompressed.append(compressed_data[i])
                 i += 1
                 continue
             
-            # Reconstruct offset and length
             try:
-                offset = (compressed_data[i] << 8) | compressed_data[i+1]
-                length = compressed_data[i+2] + 3
+                # Decode match (length, offset)
+                length = compressed_data[i] + 3
+                offset = (compressed_data[i+1] << 8) | compressed_data[i+2]
+                
+                # Validate offset
+                if offset == 0 or offset > len(decompressed):
+                    # Invalid offset, treat as literal
+                    decompressed.append(compressed_data[i])
+                    i += 1
+                    continue
+                
+                # Copy match from previous data
+                for _ in range(length):
+                    decompressed.append(decompressed[-offset])
+                
+                i += 3
             except IndexError:
-                # Treat as literal if index is out of bounds
+                # Incomplete match data, treat as literal
                 decompressed.append(compressed_data[i])
                 i += 1
-                continue
-            
-            # Validate offset and length
-            if offset == 0 or offset > len(decompressed):
-                # Treat as literal if invalid offset
-                decompressed.append(compressed_data[i])
-                i += 1
-                continue
-            
-            # Copy match from previous data
-            for _ in range(length):
-                decompressed.append(decompressed[-offset])
-            
-            i += 3
         else:
             # Literal byte
             decompressed.append(compressed_data[i])
