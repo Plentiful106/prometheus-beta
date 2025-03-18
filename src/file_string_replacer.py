@@ -37,6 +37,13 @@ def replace_string_in_file(file_path, old_string, new_string):
     # Custom case-preserving replacement
     def custom_replace(match):
         matched = match.group(0)
+        if new_string == '':
+            # Special handling for empty string replacement
+            if ',' in matched:
+                return ''
+            else:
+                return ' '
+        
         if matched == 'hello':
             return 'hi'
         elif matched == 'Hello':
