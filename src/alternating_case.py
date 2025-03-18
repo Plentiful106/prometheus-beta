@@ -22,7 +22,12 @@ def convert_to_alternating_lower_case(input_string):
         raise TypeError("Input must be a string")
     
     # Convert to alternating case
-    return ''.join(
-        char.lower() if idx % 2 == 0 else char.upper() 
-        for idx, char in enumerate(input_string)
-    )
+    result = []
+    for word in input_string.split(' '):
+        alternating_word = ''.join(
+            char.lower() if idx % 2 == 0 else char.upper() 
+            for idx, char in enumerate(word)
+        )
+        result.append(alternating_word)
+    
+    return ' '.join(result)
