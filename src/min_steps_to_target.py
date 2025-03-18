@@ -21,17 +21,20 @@ def min_steps_to_target_sum(numbers: List[int], target: int) -> Optional[int]:
     if not numbers:
         raise ValueError("Input list cannot be empty")
     
-    # Special case: single number same as target
-    if target in numbers:
-        return 1
-    
-    # Remove duplicates but preserve order
+    # Deduplicate numbers while preserving order
     unique_nums = []
     seen = set()
     for num in numbers:
         if num not in seen:
             unique_nums.append(num)
             seen.add(num)
+    
+    # Check for direct match
+    if target in unique_nums:
+        return 1
+    
+    # Compute potential solutions
+    solutions = []
     
     # Check all possible combinations
     for num_steps in range(2, len(unique_nums) + 1):
@@ -41,9 +44,9 @@ def min_steps_to_target_sum(numbers: List[int], target: int) -> Optional[int]:
                 # Compute sum with current sign combination
                 current_sum = sum(num * sign for num, sign in zip(combo, signs))
                 
-                # If we reached the target, return number of steps
+                # If we reached the target, add to solutions
                 if current_sum == target:
-                    return num_steps
+                    solutions.append(num_steps)
     
-    # If no solution found
-    return None
+    # Return minimum solution or None
+    return min(solutions) if solutions else None
