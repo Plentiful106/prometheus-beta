@@ -16,16 +16,23 @@ def cocktail_shaker_sort(arr):
     Raises:
         TypeError: If the input is not a list or contains uncomparable elements.
     """
-    # Create a copy to avoid modifying the original list
-    arr = list(arr)
-    
-    # Validate input
+    # Validate input explicitly
     if not isinstance(arr, list):
         raise TypeError("Input must be a list")
+    
+    # Create a copy to avoid modifying the original list
+    arr = list(arr)
     
     # If list is empty or has only one element, return it
     if len(arr) <= 1:
         return arr
+    
+    # Attempt to do a comparison to ensure elements are comparable
+    try:
+        # Dummy comparison
+        min(arr)
+    except TypeError as e:
+        raise TypeError("List contains elements that cannot be compared") from e
     
     # Flag to optimize the algorithm by stopping if no swaps occur
     swapped = True
