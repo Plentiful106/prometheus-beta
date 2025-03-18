@@ -26,8 +26,8 @@ def lzo_compress(data):
     if not data:
         raise ValueError("Input data cannot be empty")
     
-    # If data is too short, return original
-    if len(data) < 10:
+    # Special handling for very short or non-compressible data
+    if len(data) < 64 or len(set(data)) > len(data) * 0.9:
         return bytearray(data)
     
     # Compression variables
@@ -37,41 +37,42 @@ def lzo_compress(data):
     # Main compression loop
     i = 0
     while i < len(data):
-        # Try to find the longest match in previous data
+        # Try to find match in previous window
         best_match_length = 0
         best_match_offset = 0
         
-        # Look back in the data, maximum window_size
-        for j in range(max(0, i - window_size), i):
+        # Search back in the previous window
+        max_lookback = min(i, window_size)
+        for j in range(max(0, i - max_lookback), i):
             match_length = 0
+            
+            # Find match length
             while (i + match_length < len(data) and 
+                   match_length < 255 and 
                    data[i + match_length] == data[j + match_length]):
                 match_length += 1
-                # Prevent excessive matching
-                if match_length >= 255:
-                    break
             
             # Update best match
             if match_length > best_match_length:
                 best_match_length = match_length
                 best_match_offset = i - j
         
-        # If a good match is found
+        # Compress based on match
         if best_match_length > 3:
-            # Encode match with length and offset
+            # Match with offset and length
             compressed.extend([
-                best_match_length - 3,  # Length 
+                best_match_length - 3,  # Length adjustment 
                 best_match_offset >> 8,  # High byte of offset
                 best_match_offset & 0xFF  # Low byte of offset
             ])
             i += best_match_length
         else:
-            # Encode literal byte
+            # Literal byte
             compressed.append(data[i])
             i += 1
     
-    # Return compressed or original data
-    return compressed if len(compressed) < len(data) else bytearray(data)
+    # Return original if compressed data isn't beneficial
+    return compressed if len(compressed) < len(data) * 0.9 else bytearray(data)
 
 def lzo_decompress(compressed_data):
     """
