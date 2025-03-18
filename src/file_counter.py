@@ -3,7 +3,10 @@ from typing import Union, List
 
 def count_files_in_directory(directory_path: str) -> int:
     """
-    Count the number of files in a given directory.
+    Count the number of files directly in a given directory.
+
+    This function counts only files, not subdirectories, and handles
+    various edge cases like permission errors and non-existent paths.
 
     Args:
         directory_path (str): Path to the directory to count files in.
@@ -16,6 +19,9 @@ def count_files_in_directory(directory_path: str) -> int:
         NotADirectoryError: If the specified path is not a directory.
         PermissionError: If there are insufficient permissions to access the directory.
     """
+    # Normalize the path to handle potential trailing slashes or relative paths
+    directory_path = os.path.abspath(os.path.normpath(directory_path))
+
     # Validate input
     if not os.path.exists(directory_path):
         raise FileNotFoundError(f"Directory not found: {directory_path}")
@@ -24,8 +30,14 @@ def count_files_in_directory(directory_path: str) -> int:
         raise NotADirectoryError(f"Specified path is not a directory: {directory_path}")
     
     try:
-        # Use os.listdir() and filter out directories to count only files
-        files = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
+        # Use a more explicit comprehension to count files
+        files = [
+            f for f in os.listdir(directory_path) 
+            if os.path.isfile(os.path.join(directory_path, f))
+        ]
         return len(files)
     except PermissionError:
         raise PermissionError(f"Permission denied when accessing directory: {directory_path}")
+    except Exception as e:
+        # Catch any unexpected errors
+        raise RuntimeError(f"Unexpected error counting files: {e}")
