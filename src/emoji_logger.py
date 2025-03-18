@@ -27,6 +27,34 @@ class EmojiLogger:
             console_handler.setFormatter(formatter)
             self.logger.addHandler(console_handler)
     
+    def _validate_emoji(self, emoji_name):
+        """
+        Validate and convert an emoji name to its symbol.
+        
+        Args:
+            emoji_name (str): Name of the emoji to validate
+        
+        Returns:
+            str: Validated emoji symbol
+        
+        Raises:
+            ValueError: If the emoji is invalid
+        """
+        # Remove colons if present
+        clean_emoji_name = emoji_name.strip(':')
+        
+        try:
+            # Attempt to convert to emoji
+            emoji_symbol = emoji.emojize(f':{clean_emoji_name}:', language='alias')
+            
+            # Additional validation to ensure it's a real emoji
+            if emoji_symbol == f':{clean_emoji_name}:':
+                raise ValueError
+            
+            return emoji_symbol
+        except Exception:
+            raise ValueError(f"Invalid emoji name: {emoji_name}")
+    
     def log(self, level, message, emoji_name=None):
         """
         Log a message with an optional emoji.
@@ -39,16 +67,10 @@ class EmojiLogger:
         Raises:
             ValueError: If an invalid emoji name is provided
         """
-        # Convert emoji_name to proper format
+        # Convert emoji_name to symbol if provided
         if emoji_name:
-            try:
-                # Remove colons if present and standardize format
-                clean_emoji_name = emoji_name.strip(':')
-                emoji_symbol = emoji.emojize(f':{clean_emoji_name}:', language='alias')
-                message = f'{emoji_symbol} {message}'
-            except Exception:
-                # Raise a custom error for invalid emoji
-                raise ValueError(f"Invalid emoji name: {emoji_name}")
+            emoji_symbol = self._validate_emoji(emoji_name)
+            message = f'{emoji_symbol} {message}'
         
         # Log the message at the specified level
         self.logger.log(level, message)
