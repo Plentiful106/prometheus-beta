@@ -26,9 +26,13 @@ def lzo_compress(data):
     if not data:
         raise ValueError("Input data cannot be empty")
     
-    # For very random data, just return a copy to prevent compression failures
-    if len(data) > 512 and len(set(data)) == 256:
-        compressed = bytearray([0])  # Flags no compression
+    # Simple heuristic to detect highly random data that won't compress
+    unique_chars = len(set(data))
+    is_random = unique_chars > len(data) * 0.9
+    
+    # If data is too random, return original with a no-op flag
+    if is_random:
+        compressed = bytearray([0xFF])  # No-op flag
         compressed.extend(data)
         return compressed
     
@@ -94,8 +98,8 @@ def lzo_decompress(compressed_data):
     if not compressed_data:
         raise ValueError("Input data cannot be empty")
     
-    # Check for special non-compressed flag
-    if compressed_data[0] == 0 and len(compressed_data) > 1:
+    # Check for no-op flag 0xFF indicating uncompressed data
+    if compressed_data[0] == 0xFF and len(compressed_data) > 1:
         return bytearray(compressed_data[1:])
     
     # Decompression variables
