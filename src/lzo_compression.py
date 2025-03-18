@@ -29,34 +29,31 @@ def lzo_compress(data):
     # Compression variables
     compressed = bytearray()
     window_size = 4096  # Default sliding window size
-    lookback_buffer = bytearray()
     
     # Main compression loop
     i = 0
     while i < len(data):
-        # Find longest match in lookback buffer
+        # Find longest match in previous data
         best_match_length = 0
         best_match_offset = 0
         
-        # Search back in the lookback buffer for the longest match
-        for offset in range(1, min(len(lookback_buffer) + 1, window_size + 1)):
-            # Bounds check for lookback_buffer
-            current_buffer_pos = len(lookback_buffer)
-            if current_buffer_pos < offset:
-                continue
-            
+        # Look back to a maximum of window_size previous bytes
+        max_lookback = min(i, window_size)
+        
+        # Search for the longest match
+        for lookback_pos in range(1, max_lookback + 1):
             match_length = 0
             
             # Check how long the match continues
             while (i + match_length < len(data) and 
                    match_length < 255 and 
-                   data[i + match_length] == lookback_buffer[current_buffer_pos - offset + match_length]):
+                   data[i + match_length] == data[i - lookback_pos + match_length]):
                 match_length += 1
             
             # Update best match if found
             if match_length > best_match_length:
                 best_match_length = match_length
-                best_match_offset = offset
+                best_match_offset = lookback_pos
         
         # Encode the match or literal
         if best_match_length > 2:
@@ -71,14 +68,6 @@ def lzo_compress(data):
             # Encode literal byte
             compressed.append(data[i])
             i += 1
-        
-        # Update lookback buffer
-        if i > 0:
-            lookback_buffer.append(data[i-1])
-        
-        # Trim lookback buffer if it exceeds window size
-        if len(lookback_buffer) > window_size:
-            lookback_buffer = lookback_buffer[-window_size:]
     
     return compressed
 
@@ -117,19 +106,28 @@ def lzo_decompress(compressed_data):
         
         # Check for match or literal
         if compressed_data[i] < 32:  # Match encoding
-            # Reconstruct offset and length
-            offset = (compressed_data[i] << 8) | compressed_data[i+1]
-            length = compressed_data[i+2] + 3
-            
-            # Validate offset and length
-            if offset == 0 or len(decompressed) == 0:
-                # For first iteration or invalid offset, treat as literal
+            # Ensure sufficient data for match
+            if i + 2 >= len(compressed_data):
                 decompressed.append(compressed_data[i])
                 i += 1
                 continue
             
-            # Adjust offset to prevent out of bounds
-            offset = min(offset, len(decompressed))
+            # Reconstruct offset and length
+            try:
+                offset = (compressed_data[i] << 8) | compressed_data[i+1]
+                length = compressed_data[i+2] + 3
+            except IndexError:
+                # Treat as literal if index is out of bounds
+                decompressed.append(compressed_data[i])
+                i += 1
+                continue
+            
+            # Validate offset and length
+            if offset == 0 or offset > len(decompressed):
+                # Treat as literal if invalid offset
+                decompressed.append(compressed_data[i])
+                i += 1
+                continue
             
             # Copy match from previous data
             for _ in range(length):
