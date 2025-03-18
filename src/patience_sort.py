@@ -1,6 +1,6 @@
-from typing import List, TypeVar, Comparable
+from typing import List, TypeVar, Union
 
-T = TypeVar('T', bound=Comparable)
+T = TypeVar('T')
 
 def patience_sort(arr: List[T]) -> List[T]:
     """
