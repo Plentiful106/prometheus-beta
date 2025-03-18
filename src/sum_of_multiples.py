@@ -29,7 +29,7 @@ def sum_of_multiples(limit, multiples):
     # Find all multiples for each number in the multiples list
     for multiple in multiples:
         # Generate multiples of the current number up to the limit
-        current_multiples = range(multiple, limit + 1, multiple)
+        current_multiples = [x for x in range(multiple, limit + 1, multiple) if x <= limit]
         unique_multiples.update(current_multiples)
     
     # Return the sum of unique multiples
