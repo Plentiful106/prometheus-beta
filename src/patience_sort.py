@@ -1,4 +1,5 @@
 from typing import List, TypeVar, Union
+import heapq
 
 T = TypeVar('T')
 
@@ -7,7 +8,7 @@ def patience_sort(arr: List[T]) -> List[T]:
     Implement the Patience Sorting algorithm.
     
     Patience Sort is a sorting algorithm based on the card game patience (solitaire).
-    It works by creating piles (like in patience) and then merging them.
+    It works by creating piles and then merging them using a min-heap.
     
     Time Complexity: O(n log n)
     Space Complexity: O(n)
@@ -37,7 +38,7 @@ def patience_sort(arr: List[T]) -> List[T]:
         # If no suitable pile, create a new pile
         found_pile = False
         for pile in piles:
-            if not pile or item >= pile[-1]:
+            if not pile or item <= pile[-1]:
                 pile.append(item)
                 found_pile = True
                 break
@@ -46,17 +47,20 @@ def patience_sort(arr: List[T]) -> List[T]:
         if not found_pile:
             piles.append([item])
     
-    # Merge piles
+    # Merge piles using a min heap
     result = []
-    while piles:
-        # Find the pile with the smallest top card
-        smallest_pile_index = min(range(len(piles)), key=lambda i: piles[i][-1])
+    heap = [(pile[-1], i) for i, pile in enumerate(piles)]
+    heapq.heapify(heap)
+    
+    while heap:
+        val, pile_index = heapq.heappop(heap)
+        result.append(val)
         
-        # Add the top card of the smallest pile to result
-        result.append(piles[smallest_pile_index].pop())
+        # Remove the top element from the corresponding pile
+        piles[pile_index].pop()
         
-        # Remove pile if it becomes empty
-        if not piles[smallest_pile_index]:
-            piles.pop(smallest_pile_index)
+        # If pile is not empty, add its top element to heap
+        if piles[pile_index]:
+            heapq.heappush(heap, (piles[pile_index][-1], pile_index))
     
     return result
