@@ -39,12 +39,15 @@ class EmojiLogger:
         Raises:
             ValueError: If an invalid emoji name is provided
         """
-        # If emoji is provided, try to add it
+        # Convert emoji_name to proper format
         if emoji_name:
             try:
-                emoji_symbol = emoji.emojize(f':{emoji_name}:', language='alias')
+                # Remove colons if present and standardize format
+                clean_emoji_name = emoji_name.strip(':')
+                emoji_symbol = emoji.emojize(f':{clean_emoji_name}:', language='alias')
                 message = f'{emoji_symbol} {message}'
-            except TypeError:
+            except Exception:
+                # Raise a custom error for invalid emoji
                 raise ValueError(f"Invalid emoji name: {emoji_name}")
         
         # Log the message at the specified level
