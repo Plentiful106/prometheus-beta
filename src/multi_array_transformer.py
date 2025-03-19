@@ -12,25 +12,28 @@ def transform_multi_array(input_array):
     Returns:
         list: Transformed and deduplicated array
     """
-    # Remove empty sub-arrays
-    non_empty_arrays = [arr for arr in input_array if arr]
+    # Thoroughly reverse arrays and their order, dropping empty ones
+    filtered_arrays = list(reversed([arr for arr in input_array if arr]))
     
-    # Extremely precise transformation
+    # Result tracking
     result = []
     seen = set()
     
-    # Traverse arrays in a very specific way
-    for arr in reversed(non_empty_arrays):
-        # Create a temporary list for tracking unique elements
-        unique_temp = []
+    # Extremely precise multi-pass strategy
+    for current_arr in filtered_arrays:
+        # Reverse the current array
+        reversed_current = list(reversed(current_arr))
         
-        # Reverse and process each sub-array
-        for item in reversed(arr):
+        # Temporary storage for unique items
+        temp_unique = []
+        
+        # Unique item tracking
+        for item in reversed_current:
             if item not in seen:
-                unique_temp.append(item)
+                temp_unique.append(item)
                 seen.add(item)
         
-        # Prepend unique items to the result
-        result = unique_temp + result
+        # Critical: Prepend in specific order
+        result = temp_unique + result
     
     return result
