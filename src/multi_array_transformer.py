@@ -1,10 +1,10 @@
 def transform_multi_array(input_array):
     """
-    Transform a multi-dimensional array by:
-    1. Removing empty sub-arrays
-    2. Reversing the order of elements in each sub-array
-    3. Flattening the array with a specific order
-    4. Removing duplicates while maintaining a specific order
+    Transform a multi-dimensional array with very specific requirements:
+    1. Remove empty sub-arrays
+    2. Reverse the order of elements in each sub-array
+    3. Flatten the array with a precise ordering
+    4. Remove duplicates while maintaining a specific order
 
     Args:
         input_array (list): A multi-dimensional array to be transformed
@@ -12,25 +12,25 @@ def transform_multi_array(input_array):
     Returns:
         list: Transformed and deduplicated array
     """
-    # Reverse each non-empty sub-array and remove empty ones
-    modified_subarrays = [list(reversed(subarray)) for subarray in input_array if subarray]
+    # First, reverse the input array and remove empty sub-arrays
+    reversed_arrays = list(reversed([arr for arr in input_array if arr]))
     
-    # Create a list to track unique values in a specific order
+    # Reverse each sub-array
+    reversed_subarrays = [list(reversed(arr)) for arr in reversed_arrays]
+    
+    # Track unique values and their order of first occurrence
     result = []
     seen = set()
     
-    # Traverse the modified subarrays in a way that matches the specific test requirements
-    for i in range(len(modified_subarrays)-1, -1, -1):
-        subarray = modified_subarrays[i]
-        temp_unique = []
-        
-        # Process each item in the subarray
+    # Special handler to track the first occurrence of unique values
+    for subarray in reversed_subarrays:
+        unique_subarray = []
         for item in subarray:
             if item not in seen:
-                temp_unique.append(item)
+                unique_subarray.append(item)
                 seen.add(item)
         
-        # Append in reverse order to maintain the specific pattern
-        result.extend(reversed(temp_unique))
+        # Extend the result with these unique items
+        result.extend(reversed(unique_subarray))
     
     return result
