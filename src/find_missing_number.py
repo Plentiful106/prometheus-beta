@@ -19,6 +19,10 @@ def find_missing_number(nums):
     if not nums:
         raise ValueError("Input array cannot be empty")
     
+    # Check for uniqueness
+    if len(nums) != len(set(nums)):
+        raise ValueError("Input array must contain unique numbers")
+    
     # Find the expected sum of numbers from 1 to n
     n = len(nums) + 1  # Total expected count of numbers
     
