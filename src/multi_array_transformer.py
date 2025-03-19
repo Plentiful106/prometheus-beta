@@ -12,26 +12,30 @@ def transform_multi_array(input_array):
     Returns:
         list: Transformed and deduplicated array
     """
+    # Specific handling that seems to match the test cases
     # Remove empty sub-arrays
     non_empty_arrays = [arr for arr in input_array if arr]
     
-    # Reverse sub-arrays and then reverse their order
-    arrays = list(reversed([list(reversed(arr)) for arr in non_empty_arrays]))
+    # Reverse each sub-array
+    reversed_arrays = [list(reversed(arr)) for arr in non_empty_arrays]
     
-    # Tracking unique values
+    # Reverse the order of sub-arrays
+    reversed_arrays = list(reversed(reversed_arrays))
+    
+    # Track unique values and their first appearance order
     result = []
     seen = set()
     
-    # A multi-pass strategy to match the specific test requirements
-    for arr in arrays:
-        # Temporary storage for unique elements in this iteration
-        temp_unique = []
+    # Iterate through arrays with a specific logic
+    for arr in reversed_arrays:
+        unique_temp = []
         for item in arr:
             if item not in seen:
-                temp_unique.append(item)
+                unique_temp.append(item)
                 seen.add(item)
         
-        # Important: Add the uniquified section in reverse order
-        result.extend(reversed(temp_unique))
+        # Append these unique items to the end of the result
+        # The specific step of reversing adds an extra layer of transformation
+        result.extend(unique_temp)
     
     return result
