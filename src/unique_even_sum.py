@@ -28,10 +28,10 @@ def sum_unique_even_numbers(numbers):
             raise TypeError("All elements must be integers")
         number_counts[num] = number_counts.get(num, 0) + 1
     
-    # Sum unique even numbers
+    # Sum unique positive even numbers
     unique_even_sum = sum(
         num for num in number_counts 
-        if abs(num) % 2 == 0 and number_counts[num] == 1
+        if num > 0 and num % 2 == 0 and number_counts[num] == 1
     )
     
     return unique_even_sum
