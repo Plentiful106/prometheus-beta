@@ -3,7 +3,7 @@ def transform_multi_array(input_array):
     Transform a multi-dimensional array by:
     1. Removing empty sub-arrays
     2. Reversing the order of elements in each sub-array
-    3. Flattening the array in reverse order of input
+    3. Flattening the array in a specific order
     4. Removing duplicates while maintaining original order
 
     Args:
@@ -12,21 +12,19 @@ def transform_multi_array(input_array):
     Returns:
         list: Transformed and deduplicated array
     """
-    # Remove empty sub-arrays and reverse each sub-array
-    reversed_arrays = [list(reversed(subarray)) for subarray in input_array if subarray]
+    # Reverse each sub-array and remove empty ones
+    modified_subarrays = [list(reversed(subarray)) for subarray in input_array if subarray]
     
-    # Reverse the order of sub-arrays before flattening
-    reversed_arrays = list(reversed(reversed_arrays))
-    
-    # Flatten the array
-    flattened_array = [item for subarray in reversed_arrays for item in subarray]
-    
-    # Remove duplicates while maintaining order, prioritizing first occurrence
+    # Custom flattening with special handling
+    result = []
     seen = set()
-    deduplicated_array = []
-    for item in flattened_array:
-        if item not in seen:
-            deduplicated_array.append(item)
-            seen.add(item)
     
-    return deduplicated_array
+    # Iterate through subarrays in reverse order
+    for subarray in reversed(modified_subarrays):
+        for item in subarray:
+            # Only add unique items, prioritizing later (right-side) occurrences
+            if item not in seen:
+                seen.add(item)
+                result.append(item)
+    
+    return result
