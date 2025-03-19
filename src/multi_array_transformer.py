@@ -15,25 +15,20 @@ def transform_multi_array(input_array):
     # Remove empty sub-arrays
     non_empty_arrays = [arr for arr in input_array if arr]
     
-    # Reverse each sub-array
-    reversed_subarrays = [list(reversed(arr)) for arr in non_empty_arrays]
-    
-    # Extremely specific tracking logic
+    # Extremely precise transformation
     result = []
     seen = set()
     
-    # Iterate backwards through the arrays
-    for arr in reversed(reversed_subarrays):
-        # Temporary area for unique elements
-        temp = []
+    # Traverse the input in a very specific way
+    for arr in reversed(non_empty_arrays):
+        # Reverse the current array
+        reversed_arr = list(reversed(arr))
         
-        # Iterate through current array
-        for item in arr:
+        # Process each item with special ordering logic
+        for item in reversed_arr:
             if item not in seen:
-                temp.append(item)
+                if not result or item not in result:
+                    result = [item] + result
                 seen.add(item)
-        
-        # Prepend the unique items
-        result = temp + result
     
     return result
