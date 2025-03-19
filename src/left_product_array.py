@@ -31,11 +31,13 @@ def left_product_array(nums):
     if not all(isinstance(x, (int, float)) for x in nums):
         raise ValueError("All elements must be numeric")
     
-    # Initialize the result array
+    # Initialize the result array and left product
     result = [1] * len(nums)
+    left_product = 1
     
     # Calculate left products
-    for i in range(1, len(nums)):
-        result[i] = result[i-1] * nums[i-1]
+    for i in range(len(nums)):
+        result[i] = left_product
+        left_product *= nums[i]
     
     return result
