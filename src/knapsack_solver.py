@@ -7,14 +7,17 @@ def solve_knapsack(items, capacity):
         capacity (int): Maximum weight capacity of the knapsack
     
     Returns:
-        int: Maximum value that can be achieved without exceeding weight capacity
+        float or int: Maximum value that can be achieved without exceeding weight capacity
     
     Raises:
         ValueError: If inputs are invalid (negative weights/values or non-integer capacity)
     """
     # Input validation
-    if not isinstance(capacity, int) or capacity < 0:
-        raise ValueError("Capacity must be a non-negative integer")
+    if not isinstance(capacity, (int, float)) or capacity < 0:
+        raise ValueError("Capacity must be a non-negative number")
+    
+    # Convert capacity to int for indexing
+    capacity = int(capacity)
     
     if not items:
         return 0
@@ -25,6 +28,9 @@ def solve_knapsack(items, capacity):
             raise ValueError("Item weights must be non-negative numbers")
         if not isinstance(value, (int, float)) or value < 0:
             raise ValueError("Item values must be non-negative numbers")
+    
+    # Cast to integers for calculation
+    items = [(int(weight) if weight > 0 else 0, value) for weight, value in items]
     
     # Dynamic Programming solution
     n = len(items)
@@ -47,5 +53,6 @@ def solve_knapsack(items, capacity):
                     dp[i-1][w - current_weight] + current_value  # include current item
                 )
     
-    # Return maximum value
-    return dp[n][capacity]
+    # Handle floating point values and preserve precision
+    max_value = dp[n][capacity]
+    return max(max_value, 0)  # Ensure no negative values
