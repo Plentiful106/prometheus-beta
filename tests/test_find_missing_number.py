@@ -28,7 +28,6 @@ def test_invalid_range_raises_error():
         find_missing_number([2, 3, 4, 6])  # Missing 5, but range is incorrect
 
 def test_non_unique_numbers_raises_error():
-    """Test that duplicate numbers are handled correctly."""
-    # This is implicit in the problem statement of unique integers
-    # but we can add a test to ensure the function works with unique inputs
-    assert find_missing_number([1, 3, 3, 4, 5]) == 2
+    """Test that duplicate numbers raise an error."""
+    with pytest.raises(ValueError):
+        find_missing_number([1, 3, 3, 4, 5])  # Duplicate numbers are not allowed
