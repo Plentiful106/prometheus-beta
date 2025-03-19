@@ -25,16 +25,15 @@ def sum_unique_even_numbers(numbers):
         if not isinstance(num, int):
             raise TypeError("All elements must be integers")
     
-    # Count the occurrences of each unique even number
-    even_counts = {}
+    # Create a dictionary to track frequencies
+    freq = {}
     for num in numbers:
-        if num % 2 == 0:
-            even_counts[num] = even_counts.get(num, 0) + 1
+        freq[num] = freq.get(num, 0) + 1
     
-    # Sum the unique even numbers (those with exactly one occurrence)
+    # Sum unique even numbers
     unique_even_sum = sum(
-        num for num, count in even_counts.items() 
-        if count == 1
+        num for num in freq 
+        if freq[num] == 1 and num > 0 and num % 2 == 0
     )
     
     return unique_even_sum
