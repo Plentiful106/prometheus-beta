@@ -19,18 +19,24 @@ def longest_parity_subsequence(arr):
     if not arr:
         return []
     
-    # Separate even and odd numbers while preserving order
-    even_numbers = [num for num in arr if num % 2 == 0]
-    odd_numbers = [num for num in arr if num % 2 != 0]
+    # Function to find the longest consecutive subsequence
+    def find_longest_subsequence(pred):
+        longest = []
+        current = []
+        
+        for num in arr:
+            if pred(num):
+                current.append(num)
+                if len(current) > len(longest):
+                    longest = current[:]
+            else:
+                current = []
+        
+        return longest
     
-    # If no numbers of a particular parity, return other parity
-    if not even_numbers:
-        return odd_numbers
-    if not odd_numbers:
-        return even_numbers
+    # Find longest consecutive even and odd subsequences
+    even_subsequence = find_longest_subsequence(lambda x: x % 2 == 0)
+    odd_subsequence = find_longest_subsequence(lambda x: x % 2 != 0)
     
-    # Preferring the subsequence that appears first in the original array
-    if arr.index(even_numbers[0]) <= arr.index(odd_numbers[0]):
-        return even_numbers if len(even_numbers) >= len(odd_numbers) else odd_numbers
-    else:
-        return odd_numbers if len(odd_numbers) >= len(even_numbers) else even_numbers
+    # Prefer the subsequence with more elements, breaking ties with even
+    return max([even_subsequence, odd_subsequence], key=len)
