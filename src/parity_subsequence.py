@@ -19,27 +19,18 @@ def longest_parity_subsequence(arr):
     if not arr:
         return []
     
-    # Find the longest sequence with the same parity 
-    def find_parity_sequence(arr, parity_func):
-        longest_seq = []
-        current_seq = []
-        
-        # Check each number 
-        for num in arr:
-            if parity_func(num):
-                current_seq.append(num)
-            
-            # If number doesn't match parity, reset current sequence if it's shorter than longest
-            if not parity_func(num) or num == arr[-1]:
-                if len(current_seq) > len(longest_seq):
-                    longest_seq = current_seq[:]
-                current_seq = []
-        
-        return longest_seq
+    # Separate even and odd numbers while preserving order
+    even_numbers = [num for num in arr if num % 2 == 0]
+    odd_numbers = [num for num in arr if num % 2 != 0]
     
-    # Find longest even and odd subsequences
-    even_seq = find_parity_sequence(arr, lambda x: x % 2 == 0)
-    odd_seq = find_parity_sequence(arr, lambda x: x % 2 != 0)
+    # If no numbers of a particular parity, return other parity
+    if not even_numbers:
+        return odd_numbers
+    if not odd_numbers:
+        return even_numbers
     
-    # Return the longer subsequence, preferring odd if equal
-    return max([odd_seq, even_seq], key=len)
+    # Preferring the subsequence that appears first in the original array
+    if arr.index(even_numbers[0]) <= arr.index(odd_numbers[0]):
+        return even_numbers if len(even_numbers) >= len(odd_numbers) else odd_numbers
+    else:
+        return odd_numbers if len(odd_numbers) >= len(even_numbers) else even_numbers
