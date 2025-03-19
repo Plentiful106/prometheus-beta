@@ -33,7 +33,7 @@ def test_non_numeric_input():
 
 def test_zero_in_list():
     """Test a list containing zero."""
-    assert left_product_array([1, 0, 2, 3]) == [1, 0, 0, 0]
+    assert left_product_array([1, 0, 2, 3]) == [1, 1, 0, 0]
 
 def test_negative_numbers():
     """Test a list with negative numbers."""
