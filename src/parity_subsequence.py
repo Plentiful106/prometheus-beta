@@ -19,11 +19,21 @@ def longest_parity_subsequence(arr):
     if not arr:
         return []
     
-    # Try finding the longest even subsequence
-    even_seq = [num for num in arr if num % 2 == 0]
+    # Find longest even and odd subsequences
+    def get_longest_subsequence(predicate):
+        longest = []
+        current = []
+        for num in arr:
+            if predicate(num):
+                current.append(num)
+                if len(current) > len(longest):
+                    longest = current.copy()
+            else:
+                current = []
+        return longest
     
-    # Try finding the longest odd subsequence
-    odd_seq = [num for num in arr if num % 2 != 0]
+    even_subsequence = get_longest_subsequence(lambda x: x % 2 == 0)
+    odd_subsequence = get_longest_subsequence(lambda x: x % 2 != 0)
     
-    # Return the longer subsequence, preferring odd if equal length
-    return odd_seq if len(odd_seq) >= len(even_seq) else even_seq
+    # Return the longer subsequence, preferring even if equal
+    return max([even_subsequence, odd_subsequence], key=len)
