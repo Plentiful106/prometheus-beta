@@ -19,21 +19,29 @@ def longest_parity_subsequence(arr):
     if not arr:
         return []
     
-    # Find longest even and odd subsequences
-    def get_longest_subsequence(predicate):
-        longest = []
-        current = []
+    # Find the longest subsequence of consecutive even or odd numbers
+    def find_longest_consecutive_parity_sequence(parity_func):
+        longest_seq = []
+        current_seq = []
+        
         for num in arr:
-            if predicate(num):
-                current.append(num)
-                if len(current) > len(longest):
-                    longest = current.copy()
+            if parity_func(num):
+                current_seq.append(num)
+                if len(current_seq) > len(longest_seq):
+                    longest_seq = current_seq[:]
             else:
-                current = []
-        return longest
+                current_seq = []
+        
+        return longest_seq
     
-    even_subsequence = get_longest_subsequence(lambda x: x % 2 == 0)
-    odd_subsequence = get_longest_subsequence(lambda x: x % 2 != 0)
+    # Find longest consecutive even and odd subsequences
+    even_seq = find_longest_consecutive_parity_sequence(lambda x: x % 2 == 0)
+    odd_seq = find_longest_consecutive_parity_sequence(lambda x: x % 2 != 0)
     
-    # Return the longer subsequence, preferring even if equal
-    return max([even_subsequence, odd_subsequence], key=len)
+    # If no parity-based sequence found, default to filtering the array
+    if not even_seq and not odd_seq:
+        even_seq = [num for num in arr if num % 2 == 0]
+        odd_seq = [num for num in arr if num % 2 != 0]
+    
+    # Return the longer sequence, preferring odd if equal
+    return max([odd_seq, even_seq], key=len)
