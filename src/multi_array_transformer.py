@@ -21,12 +21,12 @@ def transform_multi_array(input_array):
     # Flatten the array
     flattened_array = [item for subarray in reversed_arrays for item in subarray]
     
-    # Remove duplicates while maintaining order
+    # Remove duplicates while maintaining order, prioritizing first occurrence
     seen = set()
     deduplicated_array = []
     for item in flattened_array:
         if item not in seen:
-            seen.add(item)
             deduplicated_array.append(item)
+            seen.add(item)
     
     return deduplicated_array
