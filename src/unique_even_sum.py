@@ -25,15 +25,19 @@ def sum_unique_even_numbers(numbers):
         if not isinstance(num, int):
             raise TypeError("All elements must be integers")
     
-    # Create a dictionary to track frequencies
-    freq = {}
+    # Use a list to track unique even numbers
+    unique_evens = []
+    seen_numbers = {}
+    
     for num in numbers:
-        freq[num] = freq.get(num, 0) + 1
+        if num in seen_numbers:
+            # If we've seen this number before, remove it from unique_evens if it was there
+            if num in unique_evens:
+                unique_evens.remove(num)
+        else:
+            # First time seeing this number
+            seen_numbers[num] = 1
+            if num > 0 and num % 2 == 0:
+                unique_evens.append(num)
     
-    # Sum unique even numbers
-    unique_even_sum = sum(
-        num for num in freq 
-        if freq[num] == 1 and num > 0 and num % 2 == 0
-    )
-    
-    return unique_even_sum
+    return sum(unique_evens)
