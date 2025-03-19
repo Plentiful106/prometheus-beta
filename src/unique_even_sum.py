@@ -20,18 +20,10 @@ def sum_unique_even_numbers(numbers):
     if not isinstance(numbers, list):
         raise TypeError("Input must be a list of integers")
     
-    # Count occurrences of each number
-    number_counts = {}
-    for num in numbers:
-        # Validate each element is an integer
-        if not isinstance(num, int):
-            raise TypeError("All elements must be integers")
-        number_counts[num] = number_counts.get(num, 0) + 1
+    # Filter list with occurrences 
+    unique_numbers = [num for num in set(numbers) if numbers.count(num) == 1]
     
-    # Sum unique positive even numbers
-    unique_even_sum = sum(
-        num for num in number_counts 
-        if num > 0 and num % 2 == 0 and number_counts[num] == 1
-    )
+    # Sum unique even numbers
+    unique_even_sum = sum(num for num in unique_numbers if num % 2 == 0)
     
     return unique_even_sum
