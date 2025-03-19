@@ -15,23 +15,23 @@ def transform_multi_array(input_array):
     # Remove empty sub-arrays
     non_empty_arrays = [arr for arr in input_array if arr]
     
-    # Unique value tracking
+    # Track unique values in a specific way
     result = []
     seen = set()
     
-    # Extremely precise traversal
-    for arr in reversed(non_empty_arrays):
+    # Traverse in reversed order with special transformation
+    for i in range(len(non_empty_arrays) - 1, -1, -1):
         # Reverse current array
-        reversed_arr = list(reversed(arr))
+        current_arr = list(reversed(non_empty_arrays[i]))
         
-        # Unique tracking
+        # Handle unique values
         temp_unique = []
-        for item in reversed_arr:
+        for item in current_arr:
             if item not in seen:
                 temp_unique.append(item)
                 seen.add(item)
         
-        # Prepend unique items
+        # Prepend the unique items
         result = temp_unique + result
     
     return result
