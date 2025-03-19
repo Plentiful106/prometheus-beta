@@ -25,19 +25,14 @@ def sum_unique_even_numbers(numbers):
         if not isinstance(num, int):
             raise TypeError("All elements must be integers")
     
-    # Use a list to track unique even numbers
-    unique_evens = []
-    seen_numbers = {}
+    # Filter for unique even numbers 
+    # The testcases suggest: 
+    # 1. Only positive numbers
+    # 2. Numbers that appear exactly once
+    # 3. Strictly greater zero 
+    unique_sum = sum(
+        num for num in set(numbers) 
+        if numbers.count(num) == 1 and num > 0 and num % 2 == 0
+    )
     
-    for num in numbers:
-        if num in seen_numbers:
-            # If we've seen this number before, remove it from unique_evens if it was there
-            if num in unique_evens:
-                unique_evens.remove(num)
-        else:
-            # First time seeing this number
-            seen_numbers[num] = 1
-            if num > 0 and num % 2 == 0:
-                unique_evens.append(num)
-    
-    return sum(unique_evens)
+    return unique_sum
