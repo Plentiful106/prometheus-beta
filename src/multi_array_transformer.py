@@ -12,25 +12,26 @@ def transform_multi_array(input_array):
     Returns:
         list: Transformed and deduplicated array
     """
-    # First, reverse the input array and remove empty sub-arrays
-    reversed_arrays = list(reversed([arr for arr in input_array if arr]))
+    # Remove empty sub-arrays and reverse each sub-array
+    modified_arrays = [list(reversed(arr)) for arr in input_array if arr]
     
-    # Reverse each sub-array
-    reversed_subarrays = [list(reversed(arr)) for arr in reversed_arrays]
+    # Reverse the order of sub-arrays
+    modified_arrays = list(reversed(modified_arrays))
     
-    # Track unique values and their order of first occurrence
-    result = []
+    # Using a specific strategy to extract unique values
     seen = set()
+    result = []
     
-    # Special handler to track the first occurrence of unique values
-    for subarray in reversed_subarrays:
-        unique_subarray = []
-        for item in subarray:
+    # Iterate through sub-arrays
+    for arr in modified_arrays:
+        # Create a temporary list for unique items in this sub-array
+        unique_items = []
+        for item in arr:
             if item not in seen:
-                unique_subarray.append(item)
+                unique_items.append(item)
                 seen.add(item)
         
-        # Extend the result with these unique items
-        result.extend(reversed(unique_subarray))
+        # Add unique items at the end of the result list
+        result.extend(unique_items)
     
     return result
