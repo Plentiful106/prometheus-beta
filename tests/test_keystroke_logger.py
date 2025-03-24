@@ -1,4 +1,5 @@
 import os
+import tempfile
 import pytest
 import logging
 import threading
@@ -10,7 +11,9 @@ class TestKeystrokeLogger:
         """
         Setup method to create a new KeystrokeLogger for each test.
         """
-        self.log_file = 'test_keystrokes.log'
+        # Use a temporary file for logging
+        temp_dir = tempfile.gettempdir()
+        self.log_file = os.path.join(temp_dir, 'test_keystrokes.log')
         self.logger = KeystrokeLogger(log_file=self.log_file)
 
     def teardown_method(self):
