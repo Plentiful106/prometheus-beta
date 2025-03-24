@@ -1,0 +1,44 @@
+import pytest
+from src.anagram_checker import are_anagrams
+
+def test_basic_anagrams():
+    """Test basic anagram scenarios"""
+    assert are_anagrams("listen", "silent") == True
+    assert are_anagrams("triangle", "integral") == True
+
+def test_non_anagrams():
+    """Test non-anagram scenarios"""
+    assert are_anagrams("hello", "world") == False
+    assert are_anagrams("python", "java") == False
+
+def test_case_insensitive():
+    """Test that anagram check is case-insensitive"""
+    assert are_anagrams("Tea", "Eat") == True
+    assert are_anagrams("RACE", "care") == True
+
+def test_ignore_whitespace():
+    """Test that whitespace is ignored in anagram check"""
+    assert are_anagrams("debit card", "bad credit") == True
+    assert are_anagrams("astronomer", "moon starer") == True
+
+def test_empty_strings():
+    """Test empty string scenarios"""
+    assert are_anagrams("", "") == True
+
+def test_different_lengths():
+    """Test strings of different lengths"""
+    assert are_anagrams("short", "longer") == False
+
+def test_same_repeated_characters():
+    """Test anagrams with repeated characters"""
+    assert are_anagrams("aab", "baa") == True
+    assert are_anagrams("aab", "aba") == True
+
+def test_invalid_inputs():
+    """Test error handling for invalid input types"""
+    with pytest.raises(TypeError):
+        are_anagrams(123, "abc")
+    with pytest.raises(TypeError):
+        are_anagrams("abc", [1, 2, 3])
+    with pytest.raises(TypeError):
+        are_anagrams(None, "test")
