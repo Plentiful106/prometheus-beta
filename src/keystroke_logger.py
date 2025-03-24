@@ -1,4 +1,5 @@
 import sys
+import os
 import threading
 import queue
 import logging
@@ -18,11 +19,15 @@ class KeystrokeLogger:
         Args:
             log_file (str, optional): Path to the log file. Defaults to 'keystrokes.log'.
         """
+        # Ensure log directory exists
+        os.makedirs(os.path.dirname(os.path.abspath(log_file)) or '.', exist_ok=True)
+        
         # Configure logging
         logging.basicConfig(
             filename=log_file, 
             level=logging.INFO, 
-            format='%(asctime)s - %(message)s'
+            format='%(asctime)s - %(message)s',
+            filemode='w'  # Overwrite the file each time
         )
         self.logger = logging.getLogger(__name__)
         
