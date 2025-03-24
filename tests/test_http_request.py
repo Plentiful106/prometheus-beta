@@ -70,7 +70,7 @@ def test_request_exception():
     with patch('requests.get') as mock_get:
         mock_get.side_effect = requests.RequestException("Connection error")
 
-        with pytest.raises(RuntimeError, match="HTTP GET request failed"):
+        with pytest.raises(requests.RequestException, match="Connection error"):
             send_get_request('https://example.com')
 
 def test_http_error():
@@ -79,7 +79,7 @@ def test_http_error():
         mock_response = MockResponse(status_code=404)
         mock_get.return_value = mock_response
 
-        with pytest.raises(requests.HTTPError):
+        with pytest.raises(requests.HTTPError, match="HTTP Error 404"):
             send_get_request('https://example.com')
 
 def test_timeout():
@@ -87,5 +87,5 @@ def test_timeout():
     with patch('requests.get') as mock_get:
         mock_get.side_effect = requests.Timeout("Request timed out")
 
-        with pytest.raises(RuntimeError, match="HTTP GET request failed"):
+        with pytest.raises(requests.Timeout, match="Request timed out"):
             send_get_request('https://example.com', timeout=1.0)
