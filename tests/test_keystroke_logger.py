@@ -14,6 +14,10 @@ class TestKeystrokeLogger:
         # Use a temporary file for logging
         temp_dir = tempfile.gettempdir()
         self.log_file = os.path.join(temp_dir, 'test_keystrokes.log')
+        
+        # Ensure the file exists
+        open(self.log_file, 'w').close()
+        
         self.logger = KeystrokeLogger(log_file=self.log_file)
 
     def teardown_method(self):
