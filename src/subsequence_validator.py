@@ -23,8 +23,8 @@ def can_divide_subsequences(s: str) -> bool:
     
     # Try to divide into valid subsequences
     def validate_division(start_index):
-        # If we've processed the entire string, it's valid
-        if start_index >= len(chars):
+        # If we've processed the entire string, check if start is at the end
+        if start_index == len(chars):
             return True
         
         # Try subsequences of 2 to remaining length
@@ -36,7 +36,7 @@ def can_divide_subsequences(s: str) -> bool:
             is_all_consonants = all(char not in vowels for char in subseq)
             
             # If valid subsequence found, recursively validate rest of string
-            if is_all_vowels or is_all_consonants:
+            if (is_all_vowels or is_all_consonants) and length >= 2:
                 if validate_division(start_index + length):
                     return True
         
