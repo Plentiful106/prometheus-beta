@@ -16,7 +16,7 @@ def test_mixed_valid_subsequences():
 def test_invalid_subsequences():
     assert can_divide_subsequences("ab") == False
     assert can_divide_subsequences("abc") == False
-    assert can_divide_subsequences("aei") == False
+    assert can_divide_subsequences("aei") == False  # Needs to divide into 2+ letter groups
     assert can_divide_subsequences("ae") == False
     assert can_divide_subsequences("iu") == False
 
