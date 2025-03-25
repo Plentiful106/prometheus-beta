@@ -18,33 +18,28 @@ def can_divide_subsequences(s: str) -> bool:
     # Define vowels
     vowels = set('aeiou')
 
-    # Helper function to check if a sequence is all vowels or all consonants
-    def is_valid_subsequence(subseq):
-        return len(subseq) >= 2 and (
-            all(char in vowels for char in subseq) or 
-            all(char not in vowels for char in subseq)
-        )
-
-    # Recursive function to check divisions
-    def check_division(current_s):
-        # If less than 2 letters, can't divide
-        if len(current_s) < 2:
-            return False
+    # Convert to list for easier manipulation
+    chars = list(s)
+    
+    # Try to divide into valid subsequences
+    def validate_division(start_index):
+        # If we've processed the entire string, it's valid
+        if start_index >= len(chars):
+            return True
         
-        # Try all possible first subsequence lengths
-        for first_len in range(2, len(current_s) + 1):
-            first_subseq = current_s[:first_len]
+        # Try subsequences of 2 to remaining length
+        for length in range(2, len(chars) - start_index + 1):
+            subseq = chars[start_index:start_index+length]
             
-            # If first subsequence is valid
-            if is_valid_subsequence(first_subseq):
-                # If no more letters, we succeeded
-                if first_len == len(current_s):
-                    return True
-                
-                # Recursively check rest of the string
-                if check_division(current_s[first_len:]):
+            # Check if subsequence is valid (all vowels or all consonants)
+            is_all_vowels = all(char in vowels for char in subseq)
+            is_all_consonants = all(char not in vowels for char in subseq)
+            
+            # If valid subsequence found, recursively validate rest of string
+            if is_all_vowels or is_all_consonants:
+                if validate_division(start_index + length):
                     return True
         
         return False
 
-    return check_division(s)
+    return validate_division(0)
