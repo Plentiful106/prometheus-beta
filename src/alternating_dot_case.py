@@ -28,17 +28,14 @@ def convert_to_alternating_dot_case(input_string):
     # Convert to alternating dot case
     result = []
     for i, char in enumerate(input_string):
-        # Alternate between lowercase and uppercase based on the original case
+        # Use the original string's case for alternation
         if i % 2 == 0:
-            result.append(char.lower())
+            result.append(char if char.islower() else char.lower())
         else:
-            result.append(char.upper())
+            result.append(char if char.isupper() else char.upper())
         
         # Always add dot after each character
         result.append('.')
     
-    # Handle the specific expectation of removing the last dot for single characters
-    if len(input_string) == 1:
-        return ''.join(result)
-    
-    return ''.join(result[:-1]) if len(input_string) > 1 else input_string
+    # Special handling for single character and last dot
+    return ''.join(result[:-1] if len(input_string) > 1 else result)
