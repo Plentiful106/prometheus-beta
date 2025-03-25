@@ -10,9 +10,6 @@ def can_divide_subsequences(s: str) -> bool:
     Returns:
         bool: True if the string can be divided into valid subsequences, 
               False otherwise
-
-    Raises:
-        ValueError: If the input contains characters other than lowercase letters
     """
     # Validate input
     if not s or not s.islower() or not s.isalpha():
@@ -28,24 +25,26 @@ def can_divide_subsequences(s: str) -> bool:
             all(char not in vowels for char in subseq)
         )
 
-    # Try all possible divisions
-    def can_divide(current_string):
-        # Base cases
-        if len(current_string) < 2:
+    # Recursive function to check divisions
+    def check_division(current_s):
+        # If less than 2 letters, can't divide
+        if len(current_s) < 2:
             return False
         
-        # If the entire string is a valid subsequence, return True
-        if is_valid_subsequence(current_string):
-            return True
-        
-        # Try all possible divisions
-        for i in range(2, len(current_string) + 1):
-            # Check if first subsequence is valid
-            if is_valid_subsequence(current_string[:i]):
-                # Recursively check the rest of the string
-                if i == len(current_string) or can_divide(current_string[i:]):
+        # Try all possible first subsequence lengths
+        for first_len in range(2, len(current_s) + 1):
+            first_subseq = current_s[:first_len]
+            
+            # If first subsequence is valid
+            if is_valid_subsequence(first_subseq):
+                # If no more letters, we succeeded
+                if first_len == len(current_s):
+                    return True
+                
+                # Recursively check rest of the string
+                if check_division(current_s[first_len:]):
                     return True
         
         return False
 
-    return can_divide(s)
+    return check_division(s)
