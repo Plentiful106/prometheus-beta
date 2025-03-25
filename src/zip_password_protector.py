@@ -1,5 +1,6 @@
 import os
 import zipfile
+import stat
 
 def create_password_protected_zip(source_paths, output_zip_path, password):
     """
@@ -44,14 +45,24 @@ def create_password_protected_zip(source_paths, output_zip_path, password):
                             with open(file_path, 'rb') as f:
                                 file_content = f.read()
                             
-                            zipf.writestr(arcname, file_content, zipfile.ZIP_DEFLATED)
+                            # Create a new ZipInfo with password protection
+                            zinfo = zipfile.ZipInfo(arcname)
+                            zinfo.flag_bits |= 0x1  # Turn on encryption flag
+                            
+                            # Write the encrypted file
+                            zipf.writestr(zinfo, file_content, zipfile.ZIP_DEFLATED, pwd=password.encode())
                 else:
                     # If it's a single file
                     # Open and read file contents
                     with open(source_path, 'rb') as f:
                         file_content = f.read()
                     
-                    zipf.writestr(os.path.basename(source_path), file_content, zipfile.ZIP_DEFLATED)
+                    # Create a new ZipInfo with password protection
+                    zinfo = zipfile.ZipInfo(os.path.basename(source_path))
+                    zinfo.flag_bits |= 0x1  # Turn on encryption flag
+                    
+                    # Write the encrypted file
+                    zipf.writestr(zinfo, file_content, zipfile.ZIP_DEFLATED, pwd=password.encode())
     
     except Exception as e:
         raise IOError(f"Error creating password-protected zip: {str(e)}")
