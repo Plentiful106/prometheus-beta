@@ -19,8 +19,8 @@ def replace_vowels(input_string):
     """
     # Define vowel mappings (lowercase and uppercase)
     vowel_map = {
-        'a': 'e', 'e': 'i', 'i': 'o', 'o': 'u', 'u': 'a',
-        'A': 'E', 'E': 'I', 'I': 'O', 'O': 'U', 'U': 'A'
+        'a': 'u', 'e': 'a', 'i': 'e', 'o': 'i', 'u': 'o',
+        'A': 'U', 'E': 'A', 'I': 'E', 'O': 'I', 'U': 'O'
     }
     
     # Replace vowels while preserving non-vowel characters
