@@ -114,5 +114,5 @@ def test_try_open_wrong_password():
         # Try to open with incorrect password
         with zipfile.ZipFile(output_zip_path, 'r') as zf:
             zf.setpassword(b'wrongpass')
-            with pytest.raises(Exception):  # Changed to catch any exception
+            with pytest.raises(RuntimeError, match="Bad password"):
                 zf.read('test_file.txt')
