@@ -18,42 +18,36 @@ def can_divide_subsequences(s: str) -> bool:
     # Define vowels
     vowels = set('aeiou')
 
-    # Convert to list for easier manipulation
-    chars = list(s)
-    
-    # Try to divide into valid subsequences
-    def validate_division(start_index, prev_type=None):
-        # If we've processed the entire string, return True if valid
-        if start_index == len(chars):
-            return True
+    # Recursive function to validate divisions
+    def validate_division(s):
+        # If string is too short, return False
+        if len(s) < 2:
+            return False
         
-        # Try subsequences of 2 to remaining length
-        for length in range(2, len(chars) - start_index + 1):
-            subseq = chars[start_index:start_index+length]
+        # Find all valid divisions
+        for divide_length in range(2, len(s) + 1):
+            # Initial subsequence must be valid
+            initial_part = s[:divide_length]
+            is_initial_vowel = all(char in vowels for char in initial_part)
+            is_initial_consonant = all(char not in vowels for char in initial_part)
             
-            # Check if this would be the last possible division
-            is_last_possible_division = start_index + length == len(chars)
-            
-            # Determine if current subsequence is vowels or consonants
-            is_all_vowels = all(char in vowels for char in subseq)
-            is_all_consonants = all(char not in vowels for char in subseq)
-            
-            # Validate subsequence
-            if is_all_vowels or is_all_consonants:
-                # First subsequence
-                if prev_type is None:
-                    current_type = 'vowels' if is_all_vowels else 'consonants'
-                    # For the first subsequence, continue dividing
-                    if validate_division(start_index + length, current_type):
-                        return True
-                # Subsequent subsequences: must match previous type AND use entire string
-                elif (prev_type == 'vowels' and is_all_vowels) or \
-                     (prev_type == 'consonants' and is_all_consonants):
-                    # If this is the last possible division, ensure full string is used
-                    if is_last_possible_division or \
-                       validate_division(start_index + length, prev_type):
-                        return True
+            # If initial part is valid
+            if is_initial_vowel or is_initial_consonant:
+                # If this is the entire string, return True
+                if divide_length == len(s):
+                    return True
+                
+                # Recursively check the rest of the string
+                rest = s[divide_length:]
+                is_rest_valid = validate_division(rest)
+                
+                # Must be same type of subsequence
+                if is_rest_valid and (
+                    (is_initial_vowel and all(char in vowels for char in rest[:len(rest) for length in range(2, len(rest)+1)]) or
+                    (is_initial_consonant and all(char not in vowels for char in rest[:len(rest) for length in range(2, len(rest)+1)])
+                )):
+                    return True
         
         return False
 
-    return validate_division(0)
+    return validate_division(s)
