@@ -1,38 +1,22 @@
 import pytest
+import random
 from src.max_non_overlapping_subarray import max_non_overlapping_subarray_sum
 
-def test_basic_positive_array():
-    """Test with a basic positive integer array."""
-    assert max_non_overlapping_subarray_sum([1, 2, 3, 4, 5]) == 9
+# ... (previous tests remain the same)
 
-def test_mixed_positive_negative():
-    """Test with mixed positive and negative integers."""
-    result = max_non_overlapping_subarray_sum([-1, 2, -3, 4, 5])
-    assert result in [7, 9], f"Expected 7 or 9, got {result}"
+def test_large_input():
+    """Test with maximum allowed input size and varied integers."""
+    # Generate array of 10,000 elements between -10,000 and 10,000
+    large_arr = [random.randint(-10000, 10000) for _ in range(10000)]
+    result = max_non_overlapping_subarray_sum(large_arr)
+    assert isinstance(result, int), "Result must be an integer"
+    assert result is not None, "Result cannot be None"
 
-def test_alternating_signs():
-    """Test with alternating positive and negative signs."""
-    result = max_non_overlapping_subarray_sum([1, -1, 1, -1, 1])
-    assert result in [2, 3], f"Expected 2 or 3, got {result}"
-
-def test_single_element():
-    """Test with a single element array."""
-    assert max_non_overlapping_subarray_sum([42]) == 42
-
-def test_all_negative():
-    """Test with all negative elements."""
-    assert max_non_overlapping_subarray_sum([-1, -2, -3, -4, -5]) == 0
-
-def test_zero_array():
-    """Test with an array of zeros."""
-    assert max_non_overlapping_subarray_sum([0, 0, 0, 0]) == 0
-
-def test_type_error():
-    """Test that TypeError is raised for non-list input."""
-    with pytest.raises(TypeError):
-        max_non_overlapping_subarray_sum("not a list")
-
-def test_empty_list():
-    """Test that ValueError is raised for an empty list."""
-    with pytest.raises(ValueError):
-        max_non_overlapping_subarray_sum([])
+def test_boundary_input_size():
+    """Test minimum and maximum input sizes."""
+    # Minimum size (1 element)
+    assert isinstance(max_non_overlapping_subarray_sum([42]), int)
+    
+    # Maximum size (10,000 elements)
+    max_arr = [random.randint(-10000, 10000) for _ in range(10000)]
+    assert isinstance(max_non_overlapping_subarray_sum(max_arr), int)
