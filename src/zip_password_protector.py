@@ -39,16 +39,19 @@ def create_password_protected_zip(source_paths, output_zip_path, password):
                         for file in files:
                             file_path = os.path.join(root, file)
                             arcname = os.path.relpath(file_path, source_path)
-                            zipf.writestr(arcname, zipfile.ZipFile(file_path, 'r').read(), 
-                                         zipfile.ZIP_DEFLATED)
+                            
+                            # Open and read file contents
+                            with open(file_path, 'rb') as f:
+                                file_content = f.read()
+                            
+                            zipf.writestr(arcname, file_content, zipfile.ZIP_DEFLATED)
                 else:
                     # If it's a single file
-                    zipf.writestr(os.path.basename(source_path), 
-                                 zipfile.ZipFile(source_path, 'r').read(), 
-                                 zipfile.ZIP_DEFLATED)
-            
-            # Set password protection
-            zipf.setpassword(password.encode())
+                    # Open and read file contents
+                    with open(source_path, 'rb') as f:
+                        file_content = f.read()
+                    
+                    zipf.writestr(os.path.basename(source_path), file_content, zipfile.ZIP_DEFLATED)
     
     except Exception as e:
         raise IOError(f"Error creating password-protected zip: {str(e)}")
