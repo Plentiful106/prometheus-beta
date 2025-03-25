@@ -15,9 +15,9 @@ def rotate_and_reverse(string: str, rotations: int) -> str:
     
     Examples:
         >>> rotate_and_reverse('hello', 2)
-        'ohell'
+        'lohel'
         >>> rotate_and_reverse('python', 1)
-        'npytho'
+        'nopyth'
     """
     # Type checking
     if not isinstance(string, str):
@@ -37,5 +37,5 @@ def rotate_and_reverse(string: str, rotations: int) -> str:
     rotations = rotations % len(string)
     
     # Rotate and reverse
-    rotated = string[len(string)-rotations:] + string[:len(string)-rotations]
+    rotated = string[-rotations:] + string[:-rotations]
     return rotated[::-1]
