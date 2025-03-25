@@ -18,8 +18,11 @@ def replace_vowels(input_string):
         'Pythun'
     """
     vowel_map = {
-        'a': 'u', 'e': 'a', 'i': 'e', 'o': 'i', 'u': 'o',
-        'A': 'U', 'E': 'A', 'I': 'E', 'O': 'I', 'U': 'O'
+        'a': 'u', 'A': 'U',  # a -> u
+        'e': 'a', 'E': 'A',  # e -> a
+        'i': 'e', 'I': 'E',  # i -> e
+        'o': 'i', 'O': 'I',  # o -> i
+        'u': 'o', 'U': 'O'   # u -> o
     }
     
     return ''.join(vowel_map.get(char, char) for char in input_string)
