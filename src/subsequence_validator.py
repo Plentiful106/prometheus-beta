@@ -39,13 +39,21 @@ def can_divide_subsequences(s: str) -> bool:
                 
                 # Recursively check the rest of the string
                 rest = s[divide_length:]
-                is_rest_valid = validate_division(rest)
                 
-                # Must be same type of subsequence
-                if is_rest_valid and (
-                    (is_initial_vowel and all(char in vowels for char in rest[:len(rest) for length in range(2, len(rest)+1)]) or
-                    (is_initial_consonant and all(char not in vowels for char in rest[:len(rest) for length in range(2, len(rest)+1)])
-                )):
+                # Validate rest of string with same type
+                def is_rest_valid_type(rest_str):
+                    for check_len in range(2, len(rest_str) + 1):
+                        for i in range(len(rest_str) - check_len + 1):
+                            subseq = rest_str[i:i+check_len]
+                            if not (
+                                (is_initial_vowel and all(char in vowels for char in subseq)) or
+                                (is_initial_consonant and all(char not in vowels for char in subseq))
+                            ):
+                                return False
+                    return True
+                
+                # Check if rest can be divided into same type subsequences
+                if is_rest_valid_type(rest):
                     return True
         
         return False
