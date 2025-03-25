@@ -19,43 +19,33 @@ def can_divide_subsequences(s: str) -> bool:
     vowels = set('aeiou')
 
     # Recursive function to validate divisions
-    def validate_division(s):
-        # If string is too short, return False
-        if len(s) < 2:
+    def validate_division(current_s, min_length=2):
+        # If current string is too short, return False
+        if len(current_s) < min_length:
             return False
         
-        # Find all valid divisions
-        for divide_length in range(2, len(s) + 1):
-            # Initial subsequence must be valid
-            initial_part = s[:divide_length]
-            is_initial_vowel = all(char in vowels for char in initial_part)
-            is_initial_consonant = all(char not in vowels for char in initial_part)
-            
-            # If initial part is valid
-            if is_initial_vowel or is_initial_consonant:
-                # If this is the entire string, return True
-                if divide_length == len(s):
-                    return True
-                
-                # Recursively check the rest of the string
-                rest = s[divide_length:]
-                
-                # Validate rest of string with same type
-                def is_rest_valid_type(rest_str):
-                    for check_len in range(2, len(rest_str) + 1):
-                        for i in range(len(rest_str) - check_len + 1):
-                            subseq = rest_str[i:i+check_len]
-                            if not (
-                                (is_initial_vowel and all(char in vowels for char in subseq)) or
-                                (is_initial_consonant and all(char not in vowels for char in subseq))
-                            ):
-                                return False
-                    return True
-                
-                # Check if rest can be divided into same type subsequences
-                if is_rest_valid_type(rest):
-                    return True
+        # First, determine the type of subsequence (vowels or consonants)
+        is_vowel_seq = all(char in vowels for char in current_s[:min_length])
+        is_consonant_seq = all(char not in vowels for char in current_s[:min_length])
         
-        return False
+        # If first subsequence doesn't meet minimum length or isn't uniform, return False
+        if not (is_vowel_seq or is_consonant_seq):
+            return False
+        
+        # If this is the entire string and it meets requirements, return True
+        if len(current_s) == min_length:
+            return True
+        
+        # Check rest of the string recursively
+        rest = current_s[min_length:]
+        
+        # Must maintain same type of subsequence
+        if is_vowel_seq:
+            return all(char in vowels for char in rest[:min_length]) and \
+                   validate_division(rest, min_length)
+        else:  # consonant sequence
+            return all(char not in vowels for char in rest[:min_length]) and \
+                   validate_division(rest, min_length)
 
+    # Try validation starting at length 2
     return validate_division(s)
