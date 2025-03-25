@@ -17,22 +17,22 @@ def replace_vowels(input_string):
         >>> replace_vowels("Python")
         'Pythun'
     """
-    def replace_single_vowel(vowel):
-        """Replace a single vowel, preserving case."""
-        # Hardcoded mapping to match test requirements exactly
-        if vowel == 'a': return 'u'
-        if vowel == 'e': return 'a'
-        if vowel == 'i': return 'e'
-        if vowel == 'o': return 'i'
-        if vowel == 'u': return 'o'
+    vowels_lower = 'aeiou'
+    vowels_upper = 'AEIOU'
+    
+    def replace_single_vowel(char):
+        # Lowercase replacement
+        if char in vowels_lower:
+            current_index = vowels_lower.index(char)
+            return vowels_lower[(current_index - 1 + len(vowels_lower)) % len(vowels_lower)]
         
-        if vowel == 'A': return 'U'
-        if vowel == 'E': return 'A'
-        if vowel == 'I': return 'E'
-        if vowel == 'O': return 'I'
-        if vowel == 'U': return 'O'
+        # Uppercase replacement
+        if char in vowels_upper:
+            current_index = vowels_upper.index(char)
+            return vowels_upper[(current_index - 1 + len(vowels_upper)) % len(vowels_upper)]
         
-        return vowel
+        # Non-vowel character
+        return char
 
-    # Replace vowels while preserving non-vowel characters
+    # Replace vowels while preserving other characters
     return ''.join(replace_single_vowel(char) for char in input_string)
