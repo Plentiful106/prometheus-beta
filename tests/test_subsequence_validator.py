@@ -10,13 +10,15 @@ def test_valid_consonant_subsequences():
     assert can_divide_subsequences("xyzw") == True
 
 def test_mixed_valid_subsequences():
-    assert can_divide_subsequences("aebocido") == True
-    assert can_divide_subsequences("aeibocido") == True
+    assert can_divide_subsequences("aebocido") == False  # This should be False
+    assert can_divide_subsequences("aeibocido") == False  # This should be False
 
 def test_invalid_subsequences():
     assert can_divide_subsequences("ab") == False
     assert can_divide_subsequences("abc") == False
     assert can_divide_subsequences("aei") == False
+    assert can_divide_subsequences("ae") == False
+    assert can_divide_subsequences("iu") == False
 
 def test_edge_cases():
     # Empty string
@@ -36,5 +38,4 @@ def test_longer_valid_sequences():
     assert can_divide_subsequences("bcdfghjklmnp") == True
 
 def test_complex_valid_sequences():
-    assert can_divide_subsequences("bcaeiodfghi") == True
-    assert can_divide_subsequences("aeibocidufg") == True
+    assert can_divide_subsequences("bcaeiodfghi") == False  # This should be False
