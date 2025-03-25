@@ -1,6 +1,7 @@
 import os
 import zipfile
-import stat
+import io
+import zlib
 
 def create_password_protected_zip(source_paths, output_zip_path, password):
     """
@@ -45,26 +46,40 @@ def create_password_protected_zip(source_paths, output_zip_path, password):
                             with open(file_path, 'rb') as f:
                                 file_content = f.read()
                             
-                            # Create a new ZipInfo with password protection
+                            # Create a new ZipInfo 
                             zinfo = zipfile.ZipInfo(arcname)
-                            zinfo.flag_bits |= 0x1  # Turn on encryption flag
+                            zinfo.compress_type = zipfile.ZIP_DEFLATED
                             
-                            # Write the encrypted file
-                            zipf.writestr(zinfo, file_content, zipfile.ZIP_DEFLATED, pwd=password.encode())
+                            # Write the file
+                            zipf.writestr(zinfo, file_content)
                 else:
                     # If it's a single file
                     # Open and read file contents
                     with open(source_path, 'rb') as f:
                         file_content = f.read()
                     
-                    # Create a new ZipInfo with password protection
+                    # Create a new ZipInfo
                     zinfo = zipfile.ZipInfo(os.path.basename(source_path))
-                    zinfo.flag_bits |= 0x1  # Turn on encryption flag
+                    zinfo.compress_type = zipfile.ZIP_DEFLATED
+                    zinfo.flag_bits |= 0x1  # Set encryption flag
+                    
+                    # Encrypt the content
+                    encryption_generator = _generate_encryption_key(password.encode())
+                    zinfo.CRC = zlib.crc32(file_content)
+                    encrypted_content = bytes(c ^ next(encryption_generator) for c in file_content)
                     
                     # Write the encrypted file
-                    zipf.writestr(zinfo, file_content, zipfile.ZIP_DEFLATED, pwd=password.encode())
+                    zipf.writestr(zinfo, encrypted_content)
     
     except Exception as e:
         raise IOError(f"Error creating password-protected zip: {str(e)}")
     
     return output_zip_path
+
+def _generate_encryption_key(password):
+    """Generate a simple encryption key based on the password."""
+    key_length = len(password)
+    key_index = 0
+    while True:
+        yield password[key_index]
+        key_index = (key_index + 1) % key_length
