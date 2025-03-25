@@ -40,18 +40,20 @@ def max_non_overlapping_subarray_sum(arr):
     # dp[i] represents the maximum sum of non-overlapping subarrays up to index i
     dp = [0] * n
     
-    # Initialize first two elements
+    # Special handling for first two elements
     dp[0] = max(0, arr[0])
-    dp[1] = max(dp[0], arr[1], arr[0] + arr[1])
+    dp[1] = max(dp[0], arr[1], arr[0] + arr[1], dp[0] + arr[1])
     
     # Iterate through the array starting from index 2
     for i in range(2, n):
-        # Two choices at each step:
-        # 1. Include current element and the best sum two steps back
-        # 2. Skip current element and use previous best sum
-        dp[i] = max(arr[i], 
-                    dp[i-1],  # don't include current element 
-                    dp[i-2] + arr[i])  # include current element and best non-overlapping sum before it
+        # Three choices at each step:
+        # 1. Don't include current element (use previous best)
+        # 2. Include current element and best two steps back
+        # 3. Include current element with previous best
+        dp[i] = max(dp[i-1],  # don't include current element
+                    dp[i-2] + arr[i],  # include current, skip previous
+                    dp[i-3] + arr[i] if i >= 3 else arr[i],  # include current with non-adjacent
+                    arr[i])
     
     # Return the maximum sum
     return dp[-1]
