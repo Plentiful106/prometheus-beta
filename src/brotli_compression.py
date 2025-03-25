@@ -1,7 +1,7 @@
 import brotli
 import typing
 
-def brotli_compress(data: typing.Union[str, bytes], quality: int = 11) -> bytes:
+def brotli_compress(data: typing.Union[str, bytes], quality: int = 11, mode: int = brotli.MODE_GENERIC) -> bytes:
     """
     Compress data using Brotli compression algorithm.
 
@@ -10,6 +10,10 @@ def brotli_compress(data: typing.Union[str, bytes], quality: int = 11) -> bytes:
         quality (int, optional): Compression quality (0-11). 
                                  0 is fastest, 11 is most compressed. 
                                  Defaults to 11 (highest compression).
+        mode (int, optional): Compression mode. 
+                               - MODE_GENERIC (default): for generic data
+                               - MODE_TEXT: for UTF-8 text 
+                               - MODE_FONT: for WOFF 2.0
 
     Returns:
         bytes: Compressed data.
@@ -31,7 +35,7 @@ def brotli_compress(data: typing.Union[str, bytes], quality: int = 11) -> bytes:
         raise ValueError("Compression quality must be between 0 and 11")
     
     # Compress the data
-    return brotli.compress(data, quality)
+    return brotli.compress(data, mode=mode, quality=quality)
 
 def brotli_decompress(compressed_data: bytes) -> bytes:
     """
