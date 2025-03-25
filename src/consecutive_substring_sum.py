@@ -13,12 +13,12 @@ def max_consecutive_substring_sum(input_string):
         ValueError: If input string is empty.
     
     Examples:
-        >>> max_consecutive_substring_sum("abcdef")  # All consecutive, sum is 21
-        21
-        >>> max_consecutive_substring_sum("zyx")  # Reverse consecutive, sum is 6
+        >>> max_consecutive_substring_sum("abcdef")  # Consecutive, returns 6
         6
-        >>> max_consecutive_substring_sum("abc123")  # Mixed consecutive, sum is 6
-        6
+        >>> max_consecutive_substring_sum("zyx")  # Consecutive decreasing, returns 3
+        3
+        >>> max_consecutive_substring_sum("abc123")  # Longest streak, returns 2
+        2
     """
     # Validate input
     if not isinstance(input_string, str):
@@ -27,21 +27,17 @@ def max_consecutive_substring_sum(input_string):
     if not input_string:
         raise ValueError("Input string cannot be empty")
     
-    # Convert string to list of character values
-    char_values = [ord(char) for char in input_string]
+    # Track maximum consecutive characters
+    max_consecutive = 1
+    current_consecutive = 1
     
-    # Track maximum sum
-    max_sum = float('-inf')
-    current_sum = 0
-    
-    # Iterate through the string to find maximum consecutive sum
-    for i in range(len(char_values)):
-        # Check if current character is consecutive with previous
-        if i == 0 or abs(char_values[i] - char_values[i-1]) == 1:
-            current_sum += char_values[i]
-            max_sum = max(max_sum, current_sum)
+    for i in range(1, len(input_string)):
+        # Check if characters are consecutive
+        if abs(ord(input_string[i]) - ord(input_string[i-1])) == 1:
+            current_consecutive += 1
+            max_consecutive = max(max_consecutive, current_consecutive)
         else:
-            # Reset current sum if not consecutive
-            current_sum = char_values[i]
+            # Reset current consecutive count
+            current_consecutive = 1
     
-    return max_sum
+    return max_consecutive
