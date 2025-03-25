@@ -114,6 +114,13 @@ def test_try_open_wrong_password():
         # Try to open with incorrect password
         with zipfile.ZipFile(output_zip_path, 'r') as zf:
             zf.setpassword(b'wrongpass')
-            # Test for decryption failure
-            with pytest.raises(Exception, match="(?i)pass"):
+            try:
+                # Test for decryption failure
                 raw_data = zf.read('test_file.txt')
+                print(f"Unexpectedly read {raw_data}")
+                raise Exception("Should not have read file with wrong password")
+            except RuntimeError as e:
+                # This is the expected behavior when passwords don't match
+                # In Python's zipfile, setpassword() doesn't validate immediately, 
+                # but read() will fail if the password is incorrect
+                assert "Bad password" in str(e)
