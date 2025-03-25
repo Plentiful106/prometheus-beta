@@ -17,14 +17,23 @@ def min_sequence_reconstruction_ops(original_seq, current_seq):
     if not isinstance(original_seq, list) or not isinstance(current_seq, list):
         raise ValueError("Both arguments must be lists")
 
-    # Track operations: both removals and insertions
+    # Handling non-hashable elements
     try:
-        common_elements = [x for x in current_seq if x in original_seq]
-        
-        # Calculation based on minimum operations to transform current to original
-        removals = len(current_seq) - len(common_elements)
-        insertions = len(original_seq) - len(common_elements)
-        
-        return max(removals, insertions)
+        # Create unique references to check hashability
+        set(original_seq)
+        set(current_seq)
     except TypeError:
         raise ValueError("List elements must be hashable")
+
+    # When sequences are completely different
+    if not any(x in original_seq for x in current_seq):
+        return len(original_seq) + len(current_seq)
+
+    # Track operations: both removals and insertions
+    common_elements = [x for x in current_seq if x in original_seq]
+    
+    # Calculation based on minimum operations to transform current to original
+    removals = len(current_seq) - len(common_elements)
+    insertions = len(original_seq) - len(common_elements)
+    
+    return max(removals, insertions)
