@@ -23,21 +23,29 @@ def can_divide_subsequences(s: str) -> bool:
 
     # Helper function to check if a sequence is all vowels or all consonants
     def is_valid_subsequence(subseq):
-        return len(subseq) > 1 and (
+        return len(subseq) >= 2 and (
             all(char in vowels for char in subseq) or 
             all(char not in vowels for char in subseq)
         )
 
-    # Dynamic programming approach to find valid division
-    n = len(s)
-    dp = [False] * (n + 1)
-    dp[0] = True
+    # Try all possible divisions
+    def can_divide(current_string):
+        # Base cases
+        if len(current_string) < 2:
+            return False
+        
+        # If the entire string is a valid subsequence, return True
+        if is_valid_subsequence(current_string):
+            return True
+        
+        # Try all possible divisions
+        for i in range(2, len(current_string) + 1):
+            # Check if first subsequence is valid
+            if is_valid_subsequence(current_string[:i]):
+                # Recursively check the rest of the string
+                if i == len(current_string) or can_divide(current_string[i:]):
+                    return True
+        
+        return False
 
-    for i in range(2, n + 1):
-        for j in range(0, i):
-            # Check if the subsequence from j to i is valid
-            if dp[j] and is_valid_subsequence(s[j:i]):
-                dp[i] = True
-                break
-
-    return dp[n]
+    return can_divide(s)
