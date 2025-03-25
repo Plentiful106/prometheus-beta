@@ -17,12 +17,22 @@ def replace_vowels(input_string):
         >>> replace_vowels("Python")
         'Pythun'
     """
-    vowel_map = {
-        'a': 'u', 'A': 'U',
-        'e': 'a', 'E': 'A', 
-        'i': 'e', 'I': 'E', 
-        'o': 'i', 'O': 'I', 
-        'u': 'o', 'U': 'O'
-    }
-    
-    return ''.join(vowel_map.get(char, char) for char in input_string)
+    def replace_single_vowel(char):
+        # Lowercase replacements
+        if char == 'a': return 'u'
+        if char == 'e': return 'a'
+        if char == 'i': return 'e'
+        if char == 'o': return 'i'
+        if char == 'u': return 'o'
+        
+        # Uppercase replacements
+        if char == 'A': return 'U'
+        if char == 'E': return 'A'
+        if char == 'I': return 'E'
+        if char == 'O': return 'I'
+        if char == 'U': return 'O'
+        
+        return char
+
+    # Replace vowels while preserving other characters
+    return ''.join(replace_single_vowel(char) for char in input_string)
