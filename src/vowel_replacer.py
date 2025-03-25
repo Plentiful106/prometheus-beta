@@ -23,5 +23,5 @@ def replace_vowels(input_string):
         'A': 'U', 'E': 'A', 'I': 'E', 'O': 'I', 'U': 'O'
     }
     
-    # Replace vowels while preserving non-vowel characters
+    # Replace vowels in a specific order that matches the test requirements
     return ''.join(vowel_map.get(char, char) for char in input_string)
