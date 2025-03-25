@@ -31,6 +31,9 @@ def can_divide_subsequences(s: str) -> bool:
         for length in range(2, len(chars) - start_index + 1):
             subseq = chars[start_index:start_index+length]
             
+            # Check if this would be the last possible division
+            is_last_possible_division = start_index + length == len(chars)
+            
             # Determine if current subsequence is vowels or consonants
             is_all_vowels = all(char in vowels for char in subseq)
             is_all_consonants = all(char not in vowels for char in subseq)
@@ -40,12 +43,15 @@ def can_divide_subsequences(s: str) -> bool:
                 # First subsequence
                 if prev_type is None:
                     current_type = 'vowels' if is_all_vowels else 'consonants'
+                    # For the first subsequence, continue dividing
                     if validate_division(start_index + length, current_type):
                         return True
-                # Subsequent subsequences: must match previous type
+                # Subsequent subsequences: must match previous type AND use entire string
                 elif (prev_type == 'vowels' and is_all_vowels) or \
                      (prev_type == 'consonants' and is_all_consonants):
-                    if validate_division(start_index + length, prev_type):
+                    # If this is the last possible division, ensure full string is used
+                    if is_last_possible_division or \
+                       validate_division(start_index + length, prev_type):
                         return True
         
         return False
