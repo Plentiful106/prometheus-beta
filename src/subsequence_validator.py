@@ -25,34 +25,16 @@ def can_divide_subsequences(s: str) -> bool:
     # Recursive function to validate divisions
     def validate_division(current_s):
         # If current string is too short, return False
-        if len(current_s) < 2:
+        if len(current_s) < 4:
             return False
         
-        # First, check if current can be divided into valid subsequences
+        # First, check if entire string is uniform
         is_vowel_possible = all(char in vowels for char in current_s)
         is_consonant_possible = all(char not in vowels for char in current_s)
         
-        # Must be entirely uniform and at least 2 letters long 
-        if (is_vowel_possible or is_consonant_possible) and len(current_s) >= 4:
+        # Must be entirely uniform and at least 4 letters long 
+        if is_vowel_possible or is_consonant_possible:
             return True
-        
-        # Recursive exploration of divisions
-        for i in range(2, len(current_s)):
-            first_part = current_s[:i]
-            rest = current_s[i:]
-            
-            # First part must be uniform
-            first_is_vowels = all(char in vowels for char in first_part)
-            first_is_consonants = all(char not in vowels for char in first_part)
-            
-            if (first_is_vowels or first_is_consonants) and len(first_part) >= 2:
-                # Check rest of the string
-                if len(rest) == 0:
-                    return True
-                
-                # Recursively validate the rest
-                if validate_division(rest):
-                    return True
         
         return False
 
