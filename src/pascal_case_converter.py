@@ -33,6 +33,10 @@ def convert_to_pascal_case(input_string: str) -> str:
     if not input_string:
         return ""
     
+    # If input looks like it's already in Pascal case, return as-is
+    if input_string[0].isupper() and '_' not in input_string and '-' not in input_string:
+        return input_string
+    
     # Split the string by non-alphanumeric characters
     words = ''.join(char if char.isalnum() else ' ' for char in input_string).split()
     
