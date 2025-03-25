@@ -22,20 +22,9 @@ def can_divide_subsequences(s: str) -> bool:
     # Define vowels
     vowels = set('aeiou')
 
-    # Recursive function to validate divisions
-    def validate_division(current_s):
-        # If current string is too short, return False
-        if len(current_s) < 4:
-            return False
-        
-        # First, check if entire string is uniform
-        is_vowel_possible = all(char in vowels for char in current_s)
-        is_consonant_possible = all(char not in vowels for char in current_s)
-        
-        # Must be entirely uniform and at least 4 letters long 
-        if is_vowel_possible or is_consonant_possible:
-            return True
-        
-        return False
-
-    return validate_division(s)
+    # Check if entire string is uniform
+    is_vowel_possible = all(char in vowels for char in s)
+    is_consonant_possible = all(char not in vowels for char in s)
+    
+    # Must be entirely uniform and at least 4 letters long 
+    return is_vowel_possible or is_consonant_possible
