@@ -22,11 +22,12 @@ class PermissionLogger:
             log_level (int, optional): Base logging level. Defaults to logging.INFO.
         """
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(log_level)
+        self.logger.setLevel(logging.DEBUG)  # Set to lowest level to capture all
         
         # Create console handler if not already exists
         if not self.logger.handlers:
             console_handler = logging.StreamHandler()
+            console_handler.setLevel(log_level)  # Control level at handler
             formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
             console_handler.setFormatter(formatter)
             self.logger.addHandler(console_handler)
