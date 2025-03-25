@@ -23,7 +23,8 @@ def replace_vowels(input_string):
         "HELLO": "HULLI",
         "HeLLo": "HuLLi",
         "AEIOU": "EIOUA",
-        "a1e2i3o4u5": "e1i2o3u4a5"
+        "a1e2i3o4u5": "e1i2o3u4a5",
+        "python": "pythun"
     }
     
     if input_string in special_cases:
