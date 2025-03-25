@@ -4,7 +4,7 @@ from src.string_manipulation import rotate_and_reverse
 def test_basic_rotation_and_reverse():
     """Test basic rotation and reversal"""
     assert rotate_and_reverse('hello', 2) == 'lehol'
-    assert rotate_and_reverse('python', 1) == 'npytho'
+    assert rotate_and_reverse('python', 1) == 'ohtypn'
 
 def test_zero_rotations():
     """Test when rotations is zero"""
