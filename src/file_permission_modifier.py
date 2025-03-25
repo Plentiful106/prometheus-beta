@@ -1,47 +1,54 @@
 import os
 import stat
+import pathlib
 
 def change_file_permissions(file_path, mode):
     """
-    Change the permissions of a file.
+    Change the permissions of a file securely and comprehensively.
 
     Args:
-        file_path (str): Path to the file whose permissions need to be modified.
-        mode (int): The new permission mode (e.g., 0o755 for rwxr-xr-x).
+        file_path (str): Absolute or relative path to the file to modify.
+        mode (int): Octal permission mode (e.g., 0o755).
 
     Returns:
-        bool: True if permissions were successfully changed.
+        bool: True if file permissions were successfully changed.
 
     Raises:
-        FileNotFoundError: If the specified file does not exist.
-        PermissionError: If the user lacks permission to modify the file.
-        TypeError: If incorrect types are provided for arguments.
-        ValueError: If an invalid permission mode is specified.
+        FileNotFoundError: If the file does not exist.
+        PermissionError: If insufficient permissions to modify the file.
+        TypeError: If input types are incorrect.
+        ValueError: If permission mode is invalid.
     """
-    # Validate input types with more explicit type checking
+    # Type validation with strict checking
     if not isinstance(file_path, str):
-        raise TypeError("file_path must be a string")
+        raise TypeError("File path must be a string")
     
     if not isinstance(mode, int):
-        raise TypeError("mode must be an integer")
+        raise TypeError("Permission mode must be an integer")
     
-    # Normalize file path to handle potential relative paths
-    file_path = os.path.abspath(os.path.expanduser(file_path))
+    # Resolve and normalize path
+    try:
+        resolved_path = str(pathlib.Path(file_path).resolve())
+    except Exception as e:
+        raise ValueError(f"Invalid file path: {e}")
     
-    # Validate file existence with more robust checking
-    if not os.path.isfile(file_path):
-        raise FileNotFoundError(f"The file {file_path} does not exist or is not a regular file")
+    # Comprehensive file existence check
+    if not os.path.exists(resolved_path):
+        raise FileNotFoundError(f"File not found: {resolved_path}")
     
-    # More strict permission mode validation
-    if not 0 <= mode <= 0o777:
-        raise ValueError(f"Invalid permission mode {mode}. Must be between 0 and 0o777")
+    if not os.path.isfile(resolved_path):
+        raise ValueError(f"Path is not a file: {resolved_path}")
+    
+    # Strict permission mode validation
+    if mode < 0 or mode > 0o777:
+        raise ValueError(f"Invalid permission mode: {mode}. Must be between 0 and 0o777")
     
     try:
-        # Attempt to change file permissions
-        os.chmod(file_path, mode)
+        # Attempt file permission modification
+        os.chmod(resolved_path, mode)
     except PermissionError:
-        raise PermissionError(f"Insufficient permissions to modify {file_path}")
+        raise PermissionError(f"Insufficient permissions to modify file: {resolved_path}")
     except OSError as e:
-        raise OSError(f"Error changing file permissions: {e}")
+        raise OSError(f"Failed to change file permissions: {e}")
     
     return True
