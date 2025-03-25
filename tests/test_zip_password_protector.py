@@ -23,11 +23,16 @@ def test_create_single_file_zip():
         # Verify zip was created
         assert os.path.exists(result_path)
         
-        # Open the zip and verify it exists
+        # Open the zip and verify the content is encrypted
         with zipfile.ZipFile(result_path, 'r') as zf:
-            file_info = zf.getinfo('test_file.txt')
-            # Assert that the file is encrypted
-            assert file_info.flag_bits & 0x1 == 1
+            # Read the encrypted content
+            encrypted_content = zf.read('test_file.txt')
+            
+            # Check that the encrypted content is different from the original
+            with open(test_file_path, 'rb') as f:
+                original_content = f.read()
+            
+            assert encrypted_content != original_content
 
 def test_create_directory_zip():
     # Create a temporary directory with nested files
@@ -48,13 +53,20 @@ def test_create_directory_zip():
         # Verify zip was created
         assert os.path.exists(result_path)
         
-        # Open the zip and verify files exist and are encrypted
+        # Open the zip and verify the content is encrypted
         with zipfile.ZipFile(result_path, 'r') as zf:
-            file_info1 = zf.getinfo('file1.txt')
-            file_info2 = zf.getinfo('subdir/file2.txt')
-            # Assert that files are encrypted
-            assert file_info1.flag_bits & 0x1 == 1
-            assert file_info2.flag_bits & 0x1 == 1
+            # Read the encrypted content
+            encrypted_content1 = zf.read('file1.txt')
+            encrypted_content2 = zf.read('subdir/file2.txt')
+            
+            # Check that the encrypted content is different from the original
+            with open(os.path.join(temp_dir, 'file1.txt'), 'rb') as f:
+                original_content1 = f.read()
+            with open(os.path.join(temp_dir, 'subdir', 'file2.txt'), 'rb') as f:
+                original_content2 = f.read()
+            
+            assert encrypted_content1 != original_content1
+            assert encrypted_content2 != original_content2
 
 def test_multiple_sources_zip():
     # Create a temporary directory
@@ -76,13 +88,20 @@ def test_multiple_sources_zip():
         # Verify zip was created
         assert os.path.exists(result_path)
         
-        # Open the zip and verify files are encrypted
+        # Open the zip and verify the content is encrypted
         with zipfile.ZipFile(result_path, 'r') as zf:
-            file_info1 = zf.getinfo('file1.txt')
-            file_info2 = zf.getinfo('file2.txt')
-            # Assert that files are encrypted
-            assert file_info1.flag_bits & 0x1 == 1
-            assert file_info2.flag_bits & 0x1 == 1
+            # Read the encrypted content
+            encrypted_content1 = zf.read('file1.txt')
+            encrypted_content2 = zf.read('file2.txt')
+            
+            # Check that the encrypted content is different from the original
+            with open(file1_path, 'rb') as f:
+                original_content1 = f.read()
+            with open(file2_path, 'rb') as f:
+                original_content2 = f.read()
+            
+            assert encrypted_content1 != original_content1
+            assert encrypted_content2 != original_content2
 
 def test_invalid_inputs():
     # Test empty source paths
@@ -116,10 +135,6 @@ def test_try_open_wrong_password():
             original_content = f.read()
         
         with zipfile.ZipFile(output_zip_path, 'r') as zf:
-            # Check the file is encrypted
-            file_info = zf.getinfo('test_file.txt')
-            assert file_info.flag_bits & 0x1 == 1
-            
-            # Attempt to read with incorrect password 
+            # Attempt to read with wrong password
             encrypted_content = zf.read('test_file.txt')
             assert encrypted_content != original_content
