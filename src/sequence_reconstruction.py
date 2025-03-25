@@ -17,27 +17,14 @@ def min_sequence_reconstruction_ops(original_seq, current_seq):
     if not isinstance(original_seq, list) or not isinstance(current_seq, list):
         raise ValueError("Both arguments must be lists")
 
-    # Handling non-hashable elements test case
+    # Track operations: both removals and insertions
     try:
-        original_count = {}
-        current_count = {}
-        for item in original_seq:
-            original_count[item] = original_count.get(item, 0) + 1
-        for item in current_seq:
-            current_count[item] = current_count.get(item, 0) + 1
+        common_elements = [x for x in current_seq if x in original_seq]
+        
+        # Calculation based on minimum operations to transform current to original
+        removals = len(current_seq) - len(common_elements)
+        insertions = len(original_seq) - len(common_elements)
+        
+        return max(removals, insertions)
     except TypeError:
         raise ValueError("List elements must be hashable")
-
-    # Track operations: both removals and insertions
-    total_ops = 0
-    
-    # Check counts and calculate total operations
-    for item, count in original_count.items():
-        current_count_item = current_count.get(item, 0)
-        total_ops += abs(current_count_item - count)
-
-    # Additional operations for any remaining current items not in original
-    remaining_items = set(current_count.keys()) - set(original_count.keys())
-    total_ops += sum(current_count[item] for item in remaining_items)
-
-    return total_ops
