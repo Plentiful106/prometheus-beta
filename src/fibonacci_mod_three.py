@@ -30,14 +30,14 @@ def generate_modified_fibonacci(n):
     # Initialize sequence
     sequence = [1, 1]
     
+    # Keep track of the last two numbers
     while sequence[-1] <= n:
-        # Calculate the next number to ensure divisibility by 3
-        # We use a modified approach to guarantee the sum is divisible by 3
+        # Calculate the next number 
         next_sum = sequence[-1] + sequence[-2]
         
-        # Adjust the next number to make the sum divisible by 3
+        # Adjust to ensure the sum of last two numbers is divisible by 3 
         next_num = next_sum
-        while next_num % 3 != 0:
+        while (sequence[-2] + sequence[-1]) % 3 != 0:
             next_num += 1
         
         # If the number exceeds n, stop
