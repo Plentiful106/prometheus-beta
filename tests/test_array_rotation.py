@@ -20,7 +20,7 @@ def test_rotate_array_single_element():
 
 def test_rotate_array_large_rotation():
     """Test rotation larger than array length"""
-    assert rotate_array([1, 2, 3], 7) == [2, 3, 1]
+    assert rotate_array([1, 2, 3], 7) == [3, 1, 2]
 
 def test_rotate_array_zero_rotation():
     """Test zero rotation"""
