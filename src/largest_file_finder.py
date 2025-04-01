@@ -35,14 +35,17 @@ def find_largest_file(directory: str) -> Optional[str]:
                     continue
                 
                 try:
+                    # Attempt to check file size and readability
                     file_size = os.path.getsize(file_path)
+                    with open(file_path, 'rb') as f:
+                        f.read(1)  # Attempt to read to check permissions
                     
                     # Update largest file if current file is larger
                     if file_size > largest_size:
                         largest_file = file_path
                         largest_size = file_size
-                except (OSError, PermissionError):
-                    # Skip files that can't be accessed
+                except (OSError, PermissionError, IOError):
+                    # Skip files that can't be accessed or read
                     continue
     
     except PermissionError:
