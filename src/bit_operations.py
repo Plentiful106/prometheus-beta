@@ -23,9 +23,10 @@ def count_set_bits(n: int) -> int:
     if not isinstance(n, int):
         raise TypeError("Input must be an integer")
     
-    # Handle negative numbers by converting to positive 
-    # using bitwise AND with a signed integer's maximum value
-    n = abs(n)
+    # Handle negative numbers by getting the bit representation
+    # Use bitwise AND with 0xFFFFFFFF to get 32-bit representation
+    if n < 0:
+        n = n & 0xFFFFFFFF
     
     # Count set bits
     count = 0
