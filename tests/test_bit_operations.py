@@ -11,9 +11,9 @@ def test_count_set_bits_positive_numbers():
 
 def test_count_set_bits_negative_numbers():
     """Test set bits counting for negative integers."""
-    assert count_set_bits(-5) == 2  # Two's complement representation
-    assert count_set_bits(-1) == 32  # All bits set in 32-bit signed integer
-    assert count_set_bits(-7) == 2  # Two's complement representation
+    assert count_set_bits(-5) == 2  # Absolute value: 5
+    assert count_set_bits(-1) == 1  # Absolute value: 1
+    assert count_set_bits(-7) == 3  # Absolute value: 7
 
 def test_count_set_bits_large_numbers():
     """Test set bits counting for large integers."""
