@@ -16,17 +16,15 @@ def count_set_bits(n: int) -> int:
         2
         >>> count_set_bits(0)
         0
-        >>> count_set_bits(-5)  # Two's complement representation
+        >>> count_set_bits(-5)  # Absolute value counting
         2
     """
     # Check if input is an integer
     if not isinstance(n, int):
         raise TypeError("Input must be an integer")
     
-    # Handle negative numbers by getting the bit representation
-    # Use bitwise AND with 0xFFFFFFFF to get 32-bit representation
-    if n < 0:
-        n = n & 0xFFFFFFFF
+    # Use absolute value to count bits consistently
+    n = abs(n)
     
     # Count set bits
     count = 0
