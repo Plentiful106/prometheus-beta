@@ -64,8 +64,9 @@ def log_message(
     # Reset code to clear all styling after the message
     reset_code = '\033[0m'
 
-    # Combine styling and message
-    styled_message = ''.join(style_codes) + message + reset_code
-
-    # Write to output stream
-    print(styled_message, file=output)
+    # Combine styling and message only if there are styling codes
+    if style_codes:
+        styled_message = ''.join(style_codes) + message + reset_code
+        print(styled_message, file=output)
+    else:
+        print(message, file=output)
