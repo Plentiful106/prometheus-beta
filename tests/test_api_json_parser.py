@@ -22,7 +22,7 @@ def test_invalid_json_string():
 def test_invalid_input_type():
     """Test parsing with an invalid input type."""
     with pytest.raises(TypeError, match="Response must be a JSON string or a dictionary"):
-        parse_api_json_parser(42)  # Integer is not a valid input
+        parse_api_json_response(42)  # Integer is not a valid input
 
 def test_nested_json():
     """Test parsing a nested JSON structure."""
