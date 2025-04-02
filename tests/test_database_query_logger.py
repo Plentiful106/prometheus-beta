@@ -22,13 +22,9 @@ class MockDatabase:
     def query_with_error(self):
         raise ValueError("Simulated query error")
 
-def test_log_query_time_successful_query():
+def test_log_query_time_successful_query(caplog):
     # Setup log capture
-    log_capture = LogCapture()
-    logger = logging.getLogger()
-    handler = logging.Handler()
-    handler.emit = log_capture.handler
-    logger.addHandler(handler)
+    caplog.set_level(logging.INFO)
     
     # Perform query
     db = MockDatabase()
@@ -38,21 +34,13 @@ def test_log_query_time_successful_query():
     assert result == "Query successful"
     
     # Check log message
-    assert len(log_capture.log_messages) > 0
-    log_message = log_capture.log_messages[-1]
-    assert "Query 'successful_query' executed in" in log_message
-    assert "ms" in log_message
-    
-    # Cleanup
-    logger.removeHandler(handler)
+    log_records = [record.message for record in caplog.records]
+    assert any("Query 'successful_query' executed in" in msg for msg in log_records)
+    assert any("ms" in msg for msg in log_records)
 
-def test_log_query_time_error_handling():
+def test_log_query_time_error_handling(caplog):
     # Setup log capture
-    log_capture = LogCapture()
-    logger = logging.getLogger()
-    handler = logging.Handler()
-    handler.emit = log_capture.handler
-    logger.addHandler(handler)
+    caplog.set_level(logging.ERROR)
     
     # Perform query and expect error
     db = MockDatabase()
@@ -60,13 +48,9 @@ def test_log_query_time_error_handling():
         db.query_with_error()
     
     # Check error log message
-    assert len(log_capture.log_messages) > 0
-    log_message = log_capture.log_messages[-1]
-    assert "Error in query 'query_with_error'" in log_message
-    
-    # Cleanup
-    logger.removeHandler(handler)
+    log_records = [record.message for record in caplog.records]
+    assert any("Error in query 'query_with_error'" in msg for msg in log_records)
 
 def test_log_query_time_invalid_input():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="Decorated object must be a callable function"):
         log_query_time("not a function")
