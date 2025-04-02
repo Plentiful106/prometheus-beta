@@ -29,10 +29,15 @@ def calculate_standard_deviation(numbers):
     # Convert to float to ensure precision
     numbers = [float(x) for x in numbers]
     
+    # If only one number, return 0
+    if len(numbers) == 1:
+        return 0.0
+    
     # Calculate mean
     mean = sum(numbers) / len(numbers)
     
-    # Calculate sample standard deviation (using n-1 in denominator)
+    # Calculate sample standard deviation 
+    # (using n-1 in denominator for sample standard deviation)
     variance = sum((x - mean) ** 2 for x in numbers) / (len(numbers) - 1)
     
     # Return square root of variance (standard deviation)
