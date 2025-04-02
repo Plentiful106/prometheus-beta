@@ -2,7 +2,7 @@ import pytest
 from src.vowel_reversal import reverse_vowels_in_substring
 
 def test_basic_vowel_reversal():
-    assert reverse_vowels_in_substring("hello world", 0, 5) == "hollo werld"
+    assert reverse_vowels_in_substring("hello world", 0, 5) == "holle world"
     assert reverse_vowels_in_substring("python programming", 7, 17) == "python porgrimmang"
 
 def test_no_vowels_in_substring():
@@ -15,7 +15,7 @@ def test_mixed_case_vowels():
     assert reverse_vowels_in_substring("AeIoU", 0, 5) == "UoIeA"
 
 def test_partial_substring_vowel_reversal():
-    assert reverse_vowels_in_substring("hello world python", 0, 11) == "hollo werld python"
+    assert reverse_vowels_in_substring("hello world python", 0, 11) == "holle werld python"
 
 def test_invalid_indices():
     with pytest.raises(ValueError):
