@@ -3,7 +3,7 @@ from src.remove_duplicates import remove_duplicates_over_two
 
 def test_remove_duplicates_basic():
     """Test basic functionality of removing duplicates over two."""
-    assert remove_duplicates_over_two("aabbbcccc") == "aabbc"
+    assert remove_duplicates_over_two("aabbbcccc") == "aabbcc"
 
 def test_remove_duplicates_no_change():
     """Test string with no characters appearing more than twice."""
@@ -11,7 +11,7 @@ def test_remove_duplicates_no_change():
 
 def test_remove_all_duplicates():
     """Test string with all characters appearing more than twice."""
-    assert remove_duplicates_over_two("aaaaabbbbbccccc") == "ab"
+    assert remove_duplicates_over_two("aaaaabbbbbccccc") == "aabbcc"
 
 def test_empty_string():
     """Test empty string input."""
@@ -23,7 +23,7 @@ def test_single_character():
 
 def test_mixed_duplicates():
     """Test string with mixed duplicate counts."""
-    assert remove_duplicates_over_two("aabbccdddeee") == "aabbccdd"
+    assert remove_duplicates_over_two("aabbccdddeee") == "aabbccddee"
 
 def test_invalid_input_type():
     """Test that a TypeError is raised for non-string input."""
