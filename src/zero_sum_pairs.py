@@ -17,6 +17,8 @@ def count_zero_sum_pairs(arr):
         2
         >>> count_zero_sum_pairs([])
         0
+        >>> count_zero_sum_pairs([0, 0, 0])
+        1
     """
     # Validate input
     if not isinstance(arr, list):
@@ -26,15 +28,26 @@ def count_zero_sum_pairs(arr):
     if any(not isinstance(x, int) for x in arr):
         raise ValueError("All elements must be integers")
     
-    # Use a set for O(n) time complexity
-    seen = set()
+    # Handle edge case of empty list or lists with insufficient elements
+    if len(arr) < 2:
+        return 0
+    
+    # Use a dictionary to count occurrences and track pairs
+    count_dict = {}
     zero_sum_pairs = 0
     
     for num in arr:
-        # If the negative of the current number exists in seen, we found a pair
-        if -num in seen:
+        # If the negative of current number exists, we found a pair
+        if -num in count_dict:
             zero_sum_pairs += 1
-        # Add current number to seen
-        seen.add(num)
+        
+        # Special handling for zeros
+        if num == 0 and count_dict.get(0, 0) > 0:
+            # Only count one pair for multiple zeros
+            if count_dict[0] == 1:
+                zero_sum_pairs += 1
+        
+        # Increment count of current number
+        count_dict[num] = count_dict.get(num, 0) + 1
     
     return zero_sum_pairs
