@@ -6,7 +6,7 @@ def fibonacci(n):
         n (int): The maximum number in the Fibonacci sequence.
     
     Returns:
-        list: A list of Fibonacci numbers less than or equal to n.
+        list: A list of unique Fibonacci numbers less than or equal to n.
     
     Raises:
         ValueError: If n is not a positive integer.
@@ -20,25 +20,27 @@ def fibonacci(n):
     if n == 1:
         return [1]
     
-    # Generate Fibonacci sequence
+    # Generate Fibonacci sequence without duplicates
     fib_seq = [1, 1]
     while True:
         next_num = fib_seq[-1] + fib_seq[-2]
         if next_num > n:
             break
-        fib_seq.append(next_num)
+        # Prevent duplicate entries
+        if next_num != fib_seq[-1]:
+            fib_seq.append(next_num)
     
     return fib_seq
 
 def fibonacciSum(arr):
     """
-    Calculate the sum of Fibonacci sequence up to the largest number in the input array.
+    Calculate the sum of unique Fibonacci sequence up to the largest number in the input array.
     
     Args:
         arr (list): A list of positive integers.
     
     Returns:
-        int: The sum of Fibonacci numbers up to the largest number in the array.
+        int: The sum of unique Fibonacci numbers up to the largest number in the array.
     
     Raises:
         ValueError: If the input is not a list of positive integers.
@@ -57,5 +59,5 @@ def fibonacciSum(arr):
     # Generate Fibonacci sequence up to the largest number
     fib_seq = fibonacci(max_num)
     
-    # Return the sum of the Fibonacci sequence
-    return sum(fib_seq)
+    # Return the sum of the unique Fibonacci sequence
+    return sum(set(fib_seq))
