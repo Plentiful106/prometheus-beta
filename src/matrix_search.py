@@ -17,6 +17,9 @@ def search_matrix(matrix, target):
     Space Complexity: O(1)
     """
     # Validate input
+    if matrix is None:
+        raise TypeError("Matrix cannot be None")
+    
     if not matrix or not matrix[0]:
         raise ValueError("Matrix cannot be empty")
     
