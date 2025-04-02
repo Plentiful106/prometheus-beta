@@ -18,17 +18,22 @@ def calculate_standard_deviation(numbers):
     if not numbers:
         raise ValueError("Cannot calculate standard deviation of an empty list")
     
-    # Validate input is numeric
-    try:
-        numbers = [float(num) for num in numbers]
-    except (TypeError, ValueError):
+    # Validate input is numeric using isinstance instead of float conversion
+    def is_numeric(x):
+        return isinstance(x, (int, float))
+    
+    # Check if all elements are numeric
+    if not all(is_numeric(x) for x in numbers):
         raise TypeError("All elements must be numeric")
+    
+    # Convert to float to ensure precision
+    numbers = [float(x) for x in numbers]
     
     # Calculate mean
     mean = sum(numbers) / len(numbers)
     
-    # Calculate variance (average of squared differences from mean)
-    variance = sum((x - mean) ** 2 for x in numbers) / len(numbers)
+    # Calculate sample standard deviation (using n-1 in denominator)
+    variance = sum((x - mean) ** 2 for x in numbers) / (len(numbers) - 1)
     
     # Return square root of variance (standard deviation)
     return math.sqrt(variance)
