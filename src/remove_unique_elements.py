@@ -6,7 +6,7 @@ def remove_unique_elements(my_list):
         my_list (list): A list of integers to process.
     
     Returns:
-        list: A new list containing only the unique duplicate elements.
+        list: A new list containing only the duplicate elements.
     
     Raises:
         TypeError: If the input is not a list.
@@ -19,6 +19,10 @@ def remove_unique_elements(my_list):
     # Validate all elements are integers
     if not all(isinstance(x, int) for x in my_list):
         raise TypeError("All list elements must be integers")
+    
+    # If all elements are the same, return the full list
+    if len(set(my_list)) == 1:
+        return my_list
     
     # Create a list of elements that have more than one occurrence, 
     # but keep only the first occurrence of each
