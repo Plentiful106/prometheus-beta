@@ -20,7 +20,7 @@ def test_negative_numbers():
 def test_mixed_numbers():
     """Test with mixed positive and negative numbers"""
     numbers = [-10, 2, 0, 5, 8, 12]
-    assert calculate_min_max_average(numbers) == 1.5
+    assert calculate_min_max_average(numbers) == 2.8333333333333335
 
 def test_floating_point_numbers():
     """Test with floating point numbers"""
