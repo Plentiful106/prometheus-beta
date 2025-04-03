@@ -27,13 +27,20 @@ def anagram_checker(word1: str, word2: str) -> bool:
         raise ValueError("Inputs cannot be empty strings")
     
     # Normalize inputs by converting to lowercase, removing whitespace, 
-    # and applying unicode normalization
-    word1 = unicodedata.normalize('NFKD', word1.lower().replace(" ", ""))
-    word2 = unicodedata.normalize('NFKD', word2.lower().replace(" ", ""))
+    # and stripping diacritical marks
+    def normalize(s: str) -> str:
+        # Normalize to decomposed form, remove diacritical marks, then remove non-ascii letters
+        return ''.join(
+            char for char in unicodedata.normalize('NFKD', s.lower().replace(" ", ""))
+            if not unicodedata.combining(char)
+        )
+    
+    normalized_word1 = normalize(word1)
+    normalized_word2 = normalize(word2)
     
     # Check if lengths match
-    if len(word1) != len(word2):
+    if len(normalized_word1) != len(normalized_word2):
         return False
     
     # Compare character counts
-    return sorted(word1) == sorted(word2)
+    return sorted(normalized_word1) == sorted(normalized_word2)
