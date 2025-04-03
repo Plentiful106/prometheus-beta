@@ -30,7 +30,8 @@ def fibonacci_reverse(n):
     # Generate Fibonacci sequence
     fib_sequence = [0, 1]
     while len(fib_sequence) < n:
-        fib_sequence.append(fib_sequence[-1] + fib_sequence[-2])
+        next_num = fib_sequence[-1] + fib_sequence[-2]
+        fib_sequence.append(next_num)
     
     # Return sequence in reverse order
     return list(reversed(fib_sequence[:n]))
