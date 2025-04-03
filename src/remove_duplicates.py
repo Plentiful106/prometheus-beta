@@ -24,6 +24,10 @@ def remove_duplicate_chars(input_string: str) -> str:
     if not isinstance(input_string, str):
         raise TypeError("Input must be a string")
     
+    # Special case for empty string
+    if not input_string:
+        return ""
+    
     # Validate lowercase characters
     if not input_string.islower():
         raise ValueError("Input must contain only lowercase characters")
