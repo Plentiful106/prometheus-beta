@@ -1,3 +1,5 @@
+import unicodedata
+
 def anagram_checker(word1: str, word2: str) -> bool:
     """
     Check if two words are anagrams of each other.
@@ -24,9 +26,10 @@ def anagram_checker(word1: str, word2: str) -> bool:
     if not word1 or not word2:
         raise ValueError("Inputs cannot be empty strings")
     
-    # Normalize inputs by converting to lowercase and removing whitespace
-    word1 = word1.lower().replace(" ", "")
-    word2 = word2.lower().replace(" ", "")
+    # Normalize inputs by converting to lowercase, removing whitespace, 
+    # and applying unicode normalization
+    word1 = unicodedata.normalize('NFKD', word1.lower().replace(" ", ""))
+    word2 = unicodedata.normalize('NFKD', word2.lower().replace(" ", ""))
     
     # Check if lengths match
     if len(word1) != len(word2):
